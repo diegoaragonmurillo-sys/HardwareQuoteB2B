@@ -1,0 +1,546 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 110;
+	objects = {
+
+/* Begin PBXContainerItemProxy section */
+		B468759C308473C000588FFB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B4687584308473BF00588FFB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B468758B308473BF00588FFB;
+			remoteInfo = HardwareQuoteB2B;
+		};
+		B46875A6308473C000588FFB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B4687584308473BF00588FFB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B468758B308473BF00588FFB;
+			remoteInfo = HardwareQuoteB2B;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		B468758C308473BF00588FFB /* HardwareQuoteB2B.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HardwareQuoteB2B.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B468759B308473C000588FFB /* HardwareQuoteB2BTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HardwareQuoteB2BTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B46875A5308473C000588FFB /* HardwareQuoteB2BUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HardwareQuoteB2BUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		B468758E308473BF00588FFB /* HardwareQuoteB2B */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = HardwareQuoteB2B;
+			sourceTree = "<group>";
+		};
+		B468759E308473C000588FFB /* HardwareQuoteB2BTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = HardwareQuoteB2BTests;
+			sourceTree = "<group>";
+		};
+		B46875A8308473C000588FFB /* HardwareQuoteB2BUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = HardwareQuoteB2BUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		B4687589308473BF00588FFB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+		B4687598308473C000588FFB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+		B46875A2308473C000588FFB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		B4687583308473BF00588FFB = {
+			isa = PBXGroup;
+			children = (
+				B468758E308473BF00588FFB /* HardwareQuoteB2B */,
+				B468759E308473C000588FFB /* HardwareQuoteB2BTests */,
+				B46875A8308473C000588FFB /* HardwareQuoteB2BUITests */,
+				B468758D308473BF00588FFB /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		B468758D308473BF00588FFB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B468758C308473BF00588FFB /* HardwareQuoteB2B.app */,
+				B468759B308473C000588FFB /* HardwareQuoteB2BTests.xctest */,
+				B46875A5308473C000588FFB /* HardwareQuoteB2BUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		B468758B308473BF00588FFB /* HardwareQuoteB2B */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B46875AD308473C000588FFB /* Build configuration list for PBXNativeTarget "HardwareQuoteB2B" */;
+			buildPhases = (
+				B4687588308473BF00588FFB /* Sources */,
+				B4687589308473BF00588FFB /* Frameworks */,
+				B468758A308473BF00588FFB /* Resources */,
+			);
+			buildRules = (
+			);
+			fileSystemSynchronizedGroups = (
+				B468758E308473BF00588FFB /* HardwareQuoteB2B */,
+			);
+			name = HardwareQuoteB2B;
+			productName = HardwareQuoteB2B;
+			productReference = B468758C308473BF00588FFB /* HardwareQuoteB2B.app */;
+			productType = "com.apple.product-type.application";
+		};
+		B468759A308473C000588FFB /* HardwareQuoteB2BTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B46875B0308473C000588FFB /* Build configuration list for PBXNativeTarget "HardwareQuoteB2BTests" */;
+			buildPhases = (
+				B4687597308473C000588FFB /* Sources */,
+				B4687598308473C000588FFB /* Frameworks */,
+				B4687599308473C000588FFB /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B468759D308473C000588FFB /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				B468759E308473C000588FFB /* HardwareQuoteB2BTests */,
+			);
+			name = HardwareQuoteB2BTests;
+			productName = HardwareQuoteB2BTests;
+			productReference = B468759B308473C000588FFB /* HardwareQuoteB2BTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		B46875A4308473C000588FFB /* HardwareQuoteB2BUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B46875B3308473C000588FFB /* Build configuration list for PBXNativeTarget "HardwareQuoteB2BUITests" */;
+			buildPhases = (
+				B46875A1308473C000588FFB /* Sources */,
+				B46875A2308473C000588FFB /* Frameworks */,
+				B46875A3308473C000588FFB /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B46875A7308473C000588FFB /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				B46875A8308473C000588FFB /* HardwareQuoteB2BUITests */,
+			);
+			name = HardwareQuoteB2BUITests;
+			productName = HardwareQuoteB2BUITests;
+			productReference = B46875A5308473C000588FFB /* HardwareQuoteB2BUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B4687584308473BF00588FFB /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2700;
+				LastUpgradeCheck = 2700;
+				TargetAttributes = {
+					B468758B308473BF00588FFB = {
+						CreatedOnToolsVersion = 27.0;
+					};
+					B468759A308473C000588FFB = {
+						CreatedOnToolsVersion = 27.0;
+						TestTargetID = B468758B308473BF00588FFB;
+					};
+					B46875A4308473C000588FFB = {
+						CreatedOnToolsVersion = 27.0;
+						TestTargetID = B468758B308473BF00588FFB;
+					};
+				};
+			};
+			buildConfigurationList = B4687587308473BF00588FFB /* Build configuration list for PBXProject "HardwareQuoteB2B" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = B4687583308473BF00588FFB;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = B468758D308473BF00588FFB /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				B468758B308473BF00588FFB /* HardwareQuoteB2B */,
+				B468759A308473C000588FFB /* HardwareQuoteB2BTests */,
+				B46875A4308473C000588FFB /* HardwareQuoteB2BUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		B468758A308473BF00588FFB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
+		B4687599308473C000588FFB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
+		B46875A3308473C000588FFB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		B4687588308473BF00588FFB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
+		B4687597308473C000588FFB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
+		B46875A1308473C000588FFB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B468759D308473C000588FFB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B468758B308473BF00588FFB /* HardwareQuoteB2B */;
+			targetProxy = B468759C308473C000588FFB /* PBXContainerItemProxy */;
+		};
+		B46875A7308473C000588FFB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B468758B308473BF00588FFB /* HardwareQuoteB2B */;
+			targetProxy = B46875A6308473C000588FFB /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		B46875AB308473C000588FFB /* Debug configuration for PBXProject "HardwareQuoteB2B" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		B46875AC308473C000588FFB /* Release configuration for PBXProject "HardwareQuoteB2B" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B46875AE308473C000588FFB /* Debug configuration for PBXNativeTarget "HardwareQuoteB2B" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = miempresa.com.HardwareQuoteB2B;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B46875AF308473C000588FFB /* Release configuration for PBXNativeTarget "HardwareQuoteB2B" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = miempresa.com.HardwareQuoteB2B;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B46875B1308473C000588FFB /* Debug configuration for PBXNativeTarget "HardwareQuoteB2BTests" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = miempresa.com.HardwareQuoteB2BTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/HardwareQuoteB2B.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/HardwareQuoteB2B";
+			};
+			name = Debug;
+		};
+		B46875B2308473C000588FFB /* Release configuration for PBXNativeTarget "HardwareQuoteB2BTests" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = miempresa.com.HardwareQuoteB2BTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/HardwareQuoteB2B.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/HardwareQuoteB2B";
+			};
+			name = Release;
+		};
+		B46875B4308473C000588FFB /* Debug configuration for PBXNativeTarget "HardwareQuoteB2BUITests" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = miempresa.com.HardwareQuoteB2BUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = HardwareQuoteB2B;
+			};
+			name = Debug;
+		};
+		B46875B5308473C000588FFB /* Release configuration for PBXNativeTarget "HardwareQuoteB2BUITests" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = miempresa.com.HardwareQuoteB2BUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = HardwareQuoteB2B;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		B4687587308473BF00588FFB /* Build configuration list for PBXProject "HardwareQuoteB2B" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B46875AB308473C000588FFB /* Debug configuration for PBXProject "HardwareQuoteB2B" */,
+				B46875AC308473C000588FFB /* Release configuration for PBXProject "HardwareQuoteB2B" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		B46875AD308473C000588FFB /* Build configuration list for PBXNativeTarget "HardwareQuoteB2B" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B46875AE308473C000588FFB /* Debug configuration for PBXNativeTarget "HardwareQuoteB2B" */,
+				B46875AF308473C000588FFB /* Release configuration for PBXNativeTarget "HardwareQuoteB2B" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		B46875B0308473C000588FFB /* Build configuration list for PBXNativeTarget "HardwareQuoteB2BTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B46875B1308473C000588FFB /* Debug configuration for PBXNativeTarget "HardwareQuoteB2BTests" */,
+				B46875B2308473C000588FFB /* Release configuration for PBXNativeTarget "HardwareQuoteB2BTests" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		B46875B3308473C000588FFB /* Build configuration list for PBXNativeTarget "HardwareQuoteB2BUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B46875B4308473C000588FFB /* Debug configuration for PBXNativeTarget "HardwareQuoteB2BUITests" */,
+				B46875B5308473C000588FFB /* Release configuration for PBXNativeTarget "HardwareQuoteB2BUITests" */,
+			);
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = B4687584308473BF00588FFB /* Project object */;
+	validationLevel = 1;
+}

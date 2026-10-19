@@ -29,6 +29,23 @@ public enum QuotePDFError: LocalizedError, Sendable {
     }
 }
 
+// MARK: - Línea de la Tabla de Componentes
+
+/// Fila de la tabla de componentes del PDF.
+public struct LineaCotizacionPDF: Equatable, Sendable {
+    public let cantidad: Int
+    public let descripcion: String
+    public let precioUnitario: Double
+
+    public var total: Double { Double(cantidad) * precioUnitario }
+
+    public init(cantidad: Int, descripcion: String, precioUnitario: Double) {
+        self.cantidad = cantidad
+        self.descripcion = descripcion
+        self.precioUnitario = precioUnitario
+    }
+}
+
 // MARK: - Clase Principal QuotePDFManager (Almacenamiento Local)
 
 /// Gestor independiente para la generación vectorial de cotizaciones en PDF y su persistencia estricta
@@ -61,6 +78,7 @@ public final class QuotePDFManager: @unchecked Sendable {
         subtotal: Double,
         margen: Double,
         totalFinal: Double,
+        lineas: [LineaCotizacionPDF] = [],
         idCotizacion: String = UUID().uuidString
     ) async throws -> URL {
         // 1. Dibujar el archivo PDF mediante UIGraphicsPDFRenderer
@@ -69,6 +87,7 @@ public final class QuotePDFManager: @unchecked Sendable {
             subtotal: subtotal,
             margen: margen,
             totalFinal: totalFinal,
+            lineas: lineas,
             idCotizacion: idCotizacion
         )
 
@@ -87,6 +106,7 @@ public final class QuotePDFManager: @unchecked Sendable {
         subtotal: Double,
         margen: Double,
         totalFinal: Double,
+        lineas: [LineaCotizacionPDF] = [],
         idCotizacion: String
     ) throws -> Data {
         // Tamaño Carta estándar: 8.5 x 11 pulgadas a 72 ppp (612 x 792 pt)
@@ -172,6 +192,92 @@ public final class QuotePDFManager: @unchecked Sendable {
             ])
 
             posY += 90
+
+            // --- Tabla de Componentes ---
+            let formateadorTabla = NumberFormatter()
+            formateadorTabla.numberStyle = .currency
+            formateadorTabla.currencyCode = "USD"
+
+            if !lineas.isEmpty {
+                let colCantidad = margenIzquierdo + 8
+                let colDescripcion = margenIzquierdo + 55
+                let colPrecioDerecha = pageRect.width - margenIzquierdo - 100
+                let colTotalDerecha = pageRect.width - margenIzquierdo - 8
+                let limiteInferior: CGFloat = pageRect.height - 70
+
+                func dibujarEncabezadoTabla() {
+                    let atributos: [NSAttributedString.Key: Any] = [
+                        .font: UIFont.systemFont(ofSize: 9, weight: .bold),
+                        .foregroundColor: textMutedColor
+                    ]
+                    "COMPONENTES".draw(at: CGPoint(x: margenIzquierdo, y: posY), withAttributes: [
+                        .font: UIFont.systemFont(ofSize: 12, weight: .bold),
+                        .foregroundColor: primaryBrandColor
+                    ])
+                    posY += 22
+                    "CANT.".draw(at: CGPoint(x: colCantidad, y: posY), withAttributes: atributos)
+                    "DESCRIPCIÓN".draw(at: CGPoint(x: colDescripcion, y: posY), withAttributes: atributos)
+                    let pu = "P. UNITARIO"
+                    pu.draw(at: CGPoint(x: colPrecioDerecha - pu.size(withAttributes: atributos).width, y: posY), withAttributes: atributos)
+                    let tt = "TOTAL"
+                    tt.draw(at: CGPoint(x: colTotalDerecha - tt.size(withAttributes: atributos).width, y: posY), withAttributes: atributos)
+                    posY += 16
+                    let linea = UIBezierPath()
+                    linea.move(to: CGPoint(x: margenIzquierdo + 8, y: posY))
+                    linea.addLine(to: CGPoint(x: pageRect.width - margenIzquierdo - 8, y: posY))
+                    linea.lineWidth = 1
+                    primaryBrandColor.setStroke()
+                    linea.stroke()
+                    posY += 8
+                }
+
+                dibujarEncabezadoTabla()
+
+                let atributosFila: [NSAttributedString.Key: Any] = [
+                    .font: UIFont.systemFont(ofSize: 10, weight: .regular),
+                    .foregroundColor: textDarkColor
+                ]
+                let atributosNumero: [NSAttributedString.Key: Any] = [
+                    .font: UIFont.monospacedDigitSystemFont(ofSize: 10, weight: .regular),
+                    .foregroundColor: textDarkColor
+                ]
+                let anchoDescripcion = colPrecioDerecha - colDescripcion - 70
+
+                for linea in lineas {
+                    if posY + 22 > limiteInferior {
+                        context.beginPage()
+                        posY = 40
+                        dibujarEncabezadoTabla()
+                    }
+
+                    "\(linea.cantidad)".draw(at: CGPoint(x: colCantidad, y: posY), withAttributes: atributosNumero)
+                    linea.descripcion.draw(
+                        in: CGRect(x: colDescripcion, y: posY, width: anchoDescripcion, height: 14),
+                        withAttributes: atributosFila
+                    )
+                    let strPU = formateadorTabla.string(from: NSNumber(value: linea.precioUnitario)) ?? "$\(linea.precioUnitario)"
+                    strPU.draw(at: CGPoint(x: colPrecioDerecha - strPU.size(withAttributes: atributosNumero).width, y: posY), withAttributes: atributosNumero)
+                    let strTT = formateadorTabla.string(from: NSNumber(value: linea.total)) ?? "$\(linea.total)"
+                    strTT.draw(at: CGPoint(x: colTotalDerecha - strTT.size(withAttributes: atributosNumero).width, y: posY), withAttributes: atributosNumero)
+
+                    posY += 18
+                    let sep = UIBezierPath()
+                    sep.move(to: CGPoint(x: margenIzquierdo + 8, y: posY))
+                    sep.addLine(to: CGPoint(x: pageRect.width - margenIzquierdo - 8, y: posY))
+                    sep.lineWidth = 0.5
+                    borderColor.setStroke()
+                    sep.stroke()
+                    posY += 6
+                }
+
+                posY += 20
+            }
+
+            // Reserva espacio para desglose, total y términos (≈ 330 pt)
+            if posY + 330 > pageRect.height - 40 {
+                context.beginPage()
+                posY = 40
+            }
 
             // --- Sección de Resumen y Desglose Financiero ---
             let tituloDesglose = "DESGLOSE DE VALORES"
@@ -276,13 +382,32 @@ public final class QuotePDFManager: @unchecked Sendable {
         return datos
     }
 
-    // MARK: - 3. Almacenamiento Temporal para Exportación (FileManager)
+    // MARK: - 3. Almacenamiento Persistente (Documents/Cotizaciones)
 
-    /// Guarda el PDF en el directorio temporal (`temporaryDirectory`) para su exportación y uso en ShareSheet,
-    /// evitando saturar permanentemente el almacenamiento de documentos del dispositivo.
-    public func guardarPDFEnMemoriaLocal(datosPDF: Data, nombreArchivo: String) throws -> URL {
-        let directorioTemporal = FileManager.default.temporaryDirectory
-        let urlDestinoLocal = directorioTemporal.appendingPathComponent(nombreArchivo)
+    /// Carpeta donde se guardan los PDF: `Documents/Cotizaciones/`.
+    /// Se usa Documents (no `temporaryDirectory`) porque iOS limpia la carpeta temporal
+    /// y el historial dejaría de encontrar los archivos.
+    public static func directorioCotizaciones(
+        base: URL? = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+    ) throws -> URL {
+        guard let base else { throw QuotePDFError.directorioNoEncontrado }
+        let carpeta = base.appendingPathComponent("Cotizaciones", isDirectory: true)
+        do {
+            try FileManager.default.createDirectory(at: carpeta, withIntermediateDirectories: true)
+        } catch {
+            throw QuotePDFError.errorEscrituraDisco(error.localizedDescription)
+        }
+        return carpeta
+    }
+
+    /// Guarda el PDF en `Documents/Cotizaciones/` y devuelve su URL.
+    public func guardarPDFEnMemoriaLocal(
+        datosPDF: Data,
+        nombreArchivo: String,
+        directorioBase: URL? = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+    ) throws -> URL {
+        let carpeta = try Self.directorioCotizaciones(base: directorioBase)
+        let urlDestinoLocal = carpeta.appendingPathComponent(nombreArchivo)
 
         do {
             try datosPDF.write(to: urlDestinoLocal, options: .atomic)

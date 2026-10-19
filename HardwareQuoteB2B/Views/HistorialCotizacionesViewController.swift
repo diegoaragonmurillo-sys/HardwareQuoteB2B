@@ -127,13 +127,14 @@ final class HistorialCotizacionesViewController: UITableViewController {
             return
         }
 
-        let tempDirectory = FileManager.default.temporaryDirectory
-        let archivosTemporales = (try? FileManager.default.contentsOfDirectory(
-            at: tempDirectory,
+        let directorioPDF = (try? QuotePDFManager.directorioCotizaciones())
+            ?? FileManager.default.temporaryDirectory
+        let archivosGuardados = (try? FileManager.default.contentsOfDirectory(
+            at: directorioPDF,
             includingPropertiesForKeys: nil
         )) ?? []
 
-        if let pdfURL = archivosTemporales.first(where: {
+        if let pdfURL = archivosGuardados.first(where: {
             $0.pathExtension.lowercased() == "pdf" &&
             $0.lastPathComponent.localizedCaseInsensitiveContains(id.uuidString)
         }) {
@@ -154,7 +155,7 @@ final class HistorialCotizacionesViewController: UITableViewController {
         } else {
             let alerta = UIAlertController(
                 title: "Documento no disponible",
-                message: "Documento no disponible. El archivo temporal de esta cotización ya expiró o fue eliminado por el sistema.",
+                message: "Documento no disponible. El archivo PDF de esta cotización no se encontró en el dispositivo.",
                 preferredStyle: .alert
             )
             alerta.addAction(UIAlertAction(title: "Aceptar", style: .default))

@@ -90,6 +90,29 @@ final class QuoteBuilderViewModel {
         precioFinal * tasaCambioUSD_MXN
     }
 
+    /// Componentes agrupados por producto (cantidad × precio unitario) para la tabla del PDF.
+    var lineasParaPDF: [LineaCotizacionPDF] {
+        var orden: [UUID] = []
+        var agrupados: [UUID: (componente: Componente, cantidad: Int)] = [:]
+        for componente in componentesSeleccionados {
+            if let existente = agrupados[componente.id] {
+                agrupados[componente.id] = (existente.componente, existente.cantidad + 1)
+            } else {
+                orden.append(componente.id)
+                agrupados[componente.id] = (componente, 1)
+            }
+        }
+        return orden.compactMap { id in
+            agrupados[id].map {
+                LineaCotizacionPDF(
+                    cantidad: $0.cantidad,
+                    descripcion: $0.componente.nombre,
+                    precioUnitario: $0.componente.precioBase
+                )
+            }
+        }
+    }
+
     var precioFinalPEN: Double {
         precioFinal * tasaCambioUSD_PEN
     }

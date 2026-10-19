@@ -491,6 +491,7 @@ struct QuoteBuilderView: View {
                     subtotal: viewModel.subtotal,
                     margen: viewModel.margenGanancia,
                     totalFinal: viewModel.precioFinal,
+                    lineas: viewModel.lineasParaPDF,
                     idCotizacion: nuevaCotizacion.id.uuidString
                 )
 

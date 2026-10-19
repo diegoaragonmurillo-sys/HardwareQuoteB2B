@@ -416,6 +416,7 @@ struct QuoteBuilderView: View {
 
         // 2. Guardar en CoreData y sincronizar con Firebase RTDB mediante HistorialManager
         HistorialManager.shared.guardarCotizacion(
+            id: nuevaCotizacion.id,
             cliente: viewModel.clienteNombre,
             montoTotal: viewModel.precioFinal
         )

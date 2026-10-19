@@ -149,6 +149,7 @@ final class HistorialManager {
 
     /// Guarda una cotización real en CoreData y la sincroniza bajo la misma clave UUID en Firebase RTDB.
     func guardarCotizacion(
+        id: UUID = UUID(),
         cliente: String,
         montoTotal: Double,
         fecha: Date = Date(),
@@ -164,7 +165,7 @@ final class HistorialManager {
         }
 
         let nuevaCotizacion = NSManagedObject(entity: entidad, insertInto: context)
-        let idUUID = UUID()
+        let idUUID = id
         nuevaCotizacion.setValue(idUUID, forKey: "id")
         nuevaCotizacion.setValue(clienteFinal, forKey: "cliente")
         nuevaCotizacion.setValue(montoTotal, forKey: "montoTotal")

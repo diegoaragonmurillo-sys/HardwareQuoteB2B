@@ -119,6 +119,49 @@ final class HistorialCotizacionesViewController: UITableViewController {
         return cell
     }
 
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+
+        guard cotizaciones.indices.contains(indexPath.row),
+              let id = cotizaciones[indexPath.row].value(forKey: "id") as? UUID else {
+            return
+        }
+
+        let tempDirectory = FileManager.default.temporaryDirectory
+        let archivosTemporales = (try? FileManager.default.contentsOfDirectory(
+            at: tempDirectory,
+            includingPropertiesForKeys: nil
+        )) ?? []
+
+        if let pdfURL = archivosTemporales.first(where: {
+            $0.pathExtension.lowercased() == "pdf" &&
+            $0.lastPathComponent.localizedCaseInsensitiveContains(id.uuidString)
+        }) {
+            let activityVC = UIActivityViewController(activityItems: [pdfURL], applicationActivities: nil)
+
+            if let popover = activityVC.popoverPresentationController {
+                if let cell = tableView.cellForRow(at: indexPath) {
+                    popover.sourceView = cell
+                    popover.sourceRect = cell.bounds
+                } else {
+                    popover.sourceView = view
+                    popover.sourceRect = CGRect(x: view.bounds.midX, y: view.bounds.midY, width: 0, height: 0)
+                    popover.permittedArrowDirections = []
+                }
+            }
+
+            present(activityVC, animated: true)
+        } else {
+            let alerta = UIAlertController(
+                title: "Documento no disponible",
+                message: "Documento no disponible. El archivo temporal de esta cotización ya expiró o fue eliminado por el sistema.",
+                preferredStyle: .alert
+            )
+            alerta.addAction(UIAlertAction(title: "Aceptar", style: .default))
+            present(alerta, animated: true)
+        }
+    }
+
     // MARK: - Eliminación Atómica Segura (Sin colisión con reloadData)
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         guard editingStyle == .delete else { return }

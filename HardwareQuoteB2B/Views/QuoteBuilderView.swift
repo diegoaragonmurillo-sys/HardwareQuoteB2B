@@ -2,68 +2,113 @@
 //  QuoteBuilderView.swift
 //  HardwareQuoteB2B
 //
+//  Created as part of the B2B Hardware Quoting Platform.
+//  Specialist: Modern SwiftUI Architecture & UIKit Bridge Integration.
+//
 
 import SwiftData
 import SwiftUI
+import UIKit
 
 struct QuoteBuilderView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var viewModel = QuoteBuilderViewModel()
-    @State private var mostrarConfirmacionGuardado = false
+
+    // MARK: - Variables de Estado de Navegación y Exportación
+    @State private var mostrarHistorial = false
+    @State private var mostrarShareSheet = false
+    @State private var urlDocumentoPDF: URL?
+    @State private var estaGenerandoPDF = false
 
     // Acento corporativo sutil (Azul Pizarra Ejecutivo)
     private let corporateAccent = Color(red: 0.20, green: 0.34, blue: 0.55)
 
     var body: some View {
         NavigationStack {
-            ZStack {
+            ZStack(alignment: .top) {
                 Color(uiColor: .systemGroupedBackground)
                     .ignoresSafeArea()
 
                 ScrollView {
-                    VStack(spacing: 24) {
+                    VStack(alignment: .leading, spacing: 22) {
+                        cabeceraPrincipalSection
                         headerClienteSection
                         medidorEnergiaCard
                         listadoPiezasSection
+                        ControlNotasVozView(accentColor: corporateAccent)
                         margenComercialCard
                     }
                     .padding(.horizontal, 20)
-                    .padding(.top, 12)
+                    .padding(.top, 8)
                     .padding(.bottom, 160)
                 }
                 .scrollIndicators(.hidden)
             }
-            .navigationTitle("Cotizador B2B")
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        viewModel.mostrarSelectorCatalogo = true
-                    } label: {
-                        Label("Añadir Pieza", systemImage: "plus.circle.fill")
-                            .symbolRenderingMode(.hierarchical)
-                            .foregroundStyle(corporateAccent)
-                    }
-                }
-            }
+            .toolbar(.hidden, for: .navigationBar)
             .safeAreaInset(edge: .bottom) {
                 resumenFinancieroFlotante
             }
-            .sheet(isPresented: $viewModel.mostrarSelectorCatalogo) {
-                CatalogoSelectorSheet(
+            // Sheet: Historial de Cotizaciones (CoreData + Firebase RTDB vía HistorialManager)
+            .sheet(isPresented: $mostrarHistorial) {
+                HistorialCotizacionesViewRepresentable()
+            }
+            // Sheet: Hoja nativa de compartir PDF (WhatsApp, Correo, Archivos)
+            .sheet(isPresented: $mostrarShareSheet) {
+                if let url = urlDocumentoPDF {
+                    ShareSheet(items: [url])
+                }
+            }
+        }
+    }
+
+    // MARK: - Cabecera Principal Alineada Arriba (.top)
+    private var cabeceraPrincipalSection: some View {
+        HStack(alignment: .center, spacing: 12) {
+            VStack(alignment: .leading, spacing: 3) {
+                Text("Cotizador B2B")
+                    .font(.system(size: 28, weight: .bold, design: .default))
+                    .foregroundStyle(.primary)
+
+                Text("Armado y validación de infraestructura")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            Spacer()
+
+            // Botón de Historial
+            Button {
+                mostrarHistorial = true
+            } label: {
+                HStack(spacing: 5) {
+                    Image(systemName: "clock.arrow.circlepath")
+                        .font(.subheadline.weight(.semibold))
+                    Text("Historial")
+                        .font(.footnote.weight(.semibold))
+                }
+                .foregroundStyle(corporateAccent)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(corporateAccent.opacity(0.10), in: Capsule())
+            }
+            .accessibilityLabel("Ver historial de cotizaciones")
+
+            // Puente NavigationLink hacia CatalogoHardwareView
+            NavigationLink {
+                CatalogoHardwareView(
                     viewModel: viewModel,
                     accentColor: corporateAccent
                 )
-                .presentationDetents([.medium, .large])
-                .presentationDragIndicator(.visible)
-                .presentationBackground(.ultraThinMaterial)
+            } label: {
+                Image(systemName: "plus")
+                    .font(.subheadline.weight(.bold))
+                    .foregroundStyle(.white)
+                    .frame(width: 34, height: 34)
+                    .background(corporateAccent, in: Circle())
             }
-            .alert("Cotización Registrada", isPresented: $mostrarConfirmacionGuardado) {
-                Button("Aceptar", role: .cancel) {}
-            } message: {
-                Text("La propuesta para \(viewModel.clienteNombre) se ha guardado correctamente.")
-            }
+            .accessibilityLabel("Abrir almacén de hardware")
         }
+        .padding(.top, 4)
     }
 
     // MARK: - 1. Encabezado de Cuenta Corporativa
@@ -121,58 +166,33 @@ struct QuoteBuilderView: View {
                 Spacer()
 
                 Text(viewModel.estadoEnergia.etiqueta)
-                    .font(.caption.weight(.medium))
-                    .foregroundStyle(colorEstadoEnergia)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(colorParaEstadoEnergia(viewModel.estadoEnergia))
                     .padding(.horizontal, 10)
                     .padding(.vertical, 5)
                     .background(
-                        colorEstadoEnergia.opacity(0.12),
-                        in: Capsule(style: .continuous)
+                        colorParaEstadoEnergia(viewModel.estadoEnergia).opacity(0.12),
+                        in: Capsule()
                     )
             }
 
-            // Barra animada con indicadores de umbral
-            GeometryReader { proxy in
-                let totalWidth = proxy.size.width
-                let fillWidth = max(0, min(totalWidth * viewModel.porcentajeCargaWatts, totalWidth))
-
+            GeometryReader { geometry in
+                let anchoTotal = geometry.size.width
                 ZStack(alignment: .leading) {
-                    Capsule(style: .continuous)
-                        .fill(Color.primary.opacity(0.08))
+                    RoundedRectangle(cornerRadius: 7, style: .continuous)
+                        .fill(Color.primary.opacity(0.06))
                         .frame(height: 10)
 
-                    Capsule(style: .continuous)
-                        .fill(
-                            LinearGradient(
-                                colors: [corporateAccent, colorEstadoEnergia],
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
+                    RoundedRectangle(cornerRadius: 7, style: .continuous)
+                        .fill(colorParaEstadoEnergia(viewModel.estadoEnergia))
+                        .frame(
+                            width: max(0, min(anchoTotal * viewModel.porcentajeCargaWatts, anchoTotal)),
+                            height: 10
                         )
-                        .frame(width: fillWidth, height: 10)
-                        .animation(.spring(response: 0.45, dampingFraction: 0.78), value: viewModel.porcentajeCargaWatts)
-
-                    // Marcador sutil del 80% de eficiencia recomendada
-                    Rectangle()
-                        .fill(Color.primary.opacity(0.22))
-                        .frame(width: 1.5, height: 14)
-                        .offset(x: totalWidth * 0.80)
+                        .animation(.spring(response: 0.45, dampingFraction: 0.75), value: viewModel.porcentajeCargaWatts)
                 }
             }
-            .frame(height: 14)
-
-            HStack {
-                Text("Carga estimada del sistema: \(Int(viewModel.porcentajeCargaWatts * 100))%")
-                    .font(.caption)
-                    .monospacedDigit()
-                    .foregroundStyle(.secondary)
-
-                Spacer()
-
-                Text("Umbral óptimo ≤ 80%")
-                    .font(.caption2)
-                    .foregroundStyle(.tertiary)
-            }
+            .frame(height: 10)
         }
         .padding(20)
         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
@@ -182,18 +202,15 @@ struct QuoteBuilderView: View {
         )
     }
 
-    private var colorEstadoEnergia: Color {
-        switch viewModel.estadoEnergia {
-        case .optimo:
-            return corporateAccent
-        case .moderado:
-            return Color.orange
-        case .critico:
-            return Color.red
+    private func colorParaEstadoEnergia(_ estado: QuoteBuilderViewModel.EstadoEnergia) -> Color {
+        switch estado {
+        case .optimo: return .green
+        case .moderado: return .orange
+        case .critico: return .red
         }
     }
 
-    // MARK: - 3. Listado de Piezas Seleccionadas
+    // MARK: - 3. Listado Dinámico de Componentes con Swipe to Delete (.onDelete)
     private var listadoPiezasSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
@@ -204,9 +221,19 @@ struct QuoteBuilderView: View {
 
                 Spacer()
 
-                Text("\(viewModel.componentesSeleccionados.count) piezas")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                NavigationLink {
+                    CatalogoHardwareView(
+                        viewModel: viewModel,
+                        accentColor: corporateAccent
+                    )
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "plus.circle.fill")
+                        Text("Almacén (\(viewModel.componentesSeleccionados.count))")
+                    }
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(corporateAccent)
+                }
             }
 
             if viewModel.componentesSeleccionados.isEmpty {
@@ -217,33 +244,39 @@ struct QuoteBuilderView: View {
                     Text("Sin componentes asignados")
                         .font(.subheadline.weight(.medium))
                         .foregroundStyle(.secondary)
-                    Button("Explorar catálogo corporativo") {
-                        viewModel.mostrarSelectorCatalogo = true
+
+                    NavigationLink {
+                        CatalogoHardwareView(
+                            viewModel: viewModel,
+                            accentColor: corporateAccent
+                        )
+                    } label: {
+                        Text("Explorar almacén corporativo")
+                            .font(.footnote.weight(.semibold))
+                            .foregroundStyle(corporateAccent)
                     }
-                    .font(.footnote.weight(.semibold))
-                    .foregroundStyle(corporateAccent)
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 36)
                 .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
             } else {
-                VStack(spacing: 0) {
-                    ForEach(Array(viewModel.componentesSeleccionados.enumerated()), id: \.element.id) { index, componente in
+                List {
+                    ForEach(viewModel.componentesSeleccionados) { componente in
                         ComponenteFilaView(
                             componente: componente,
-                            accentColor: corporateAccent,
-                            onRemove: {
-                                viewModel.eliminarComponente(componente)
-                            }
+                            accentColor: corporateAccent
                         )
-
-                        if index < viewModel.componentesSeleccionados.count - 1 {
-                            Divider()
-                                .padding(.leading, 56)
-                        }
+                        .listRowInsets(EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16))
+                        .listRowBackground(Color.clear)
                     }
+                    .onDelete(perform: viewModel.eliminarComponentes)
                 }
+                .listStyle(.plain)
+                .scrollContentBackground(.hidden)
+                .scrollDisabled(true)
+                .frame(height: CGFloat(viewModel.componentesSeleccionados.count) * 66)
                 .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                 .overlay(
                     RoundedRectangle(cornerRadius: 18, style: .continuous)
                         .strokeBorder(Color.primary.opacity(0.08), lineWidth: 0.8)
@@ -264,39 +297,22 @@ struct QuoteBuilderView: View {
                 Spacer()
 
                 Text("\(Int((viewModel.margenGanancia * 100).rounded()))%")
-                    .font(.headline.monospacedDigit())
+                    .font(.title3.weight(.bold))
+                    .monospacedDigit()
                     .foregroundStyle(corporateAccent)
-                    .contentTransition(.numericText(value: viewModel.margenGanancia))
             }
 
-            Slider(
-                value: $viewModel.margenGanancia,
-                in: 0.05...0.45,
-                step: 0.01
-            )
-            .tint(corporateAccent)
+            Slider(value: $viewModel.margenGanancia, in: 0.05...0.40, step: 0.01)
+                .tint(corporateAccent)
 
-            HStack(spacing: 8) {
-                ForEach([0.12, 0.18, 0.25, 0.35], id: \.self) { preset in
-                    let isSelected = abs(viewModel.margenGanancia - preset) < 0.005
-                    Button {
-                        withAnimation(.snappy(duration: 0.25)) {
-                            viewModel.margenGanancia = preset
-                        }
-                    } label: {
-                        Text("\(Int(preset * 100))%")
-                            .font(.caption.weight(.medium))
-                            .monospacedDigit()
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 7)
-                            .background(
-                                isSelected ? corporateAccent.opacity(0.15) : Color.primary.opacity(0.05),
-                                in: RoundedRectangle(cornerRadius: 8, style: .continuous)
-                            )
-                            .foregroundStyle(isSelected ? corporateAccent : .secondary)
-                    }
-                    .buttonStyle(.plain)
-                }
+            HStack {
+                Text("Mínimo: 5%")
+                    .font(.caption2)
+                    .foregroundStyle(.tertiary)
+                Spacer()
+                Text("Techo sugerido: 40%")
+                    .font(.caption2)
+                    .foregroundStyle(.tertiary)
             }
         }
         .padding(20)
@@ -307,7 +323,7 @@ struct QuoteBuilderView: View {
         )
     }
 
-    // MARK: - 5. Barra Flotante de Resumen Financiero (.ultraThinMaterial)
+    // MARK: - 5. Barra Flotante de Resumen Financiero y Emisión de Cotización
     private var resumenFinancieroFlotante: some View {
         VStack(spacing: 14) {
             HStack(alignment: .firstTextBaseline) {
@@ -357,14 +373,19 @@ struct QuoteBuilderView: View {
             .animation(.snappy(duration: 0.25), value: viewModel.precioFinal)
 
             Button {
-                let nuevaCotizacion = viewModel.generarCotizacion()
-                modelContext.insert(nuevaCotizacion)
-                mostrarConfirmacionGuardado = true
+                emitirYCompartirPropuesta()
             } label: {
                 HStack(spacing: 8) {
-                    Image(systemName: "doc.badge.checkmark")
-                    Text("Emitir Propuesta Formal")
-                        .fontWeight(.semibold)
+                    if estaGenerandoPDF {
+                        ProgressView()
+                            .tint(.white)
+                        Text("Generando Propuesta...")
+                            .fontWeight(.semibold)
+                    } else {
+                        Image(systemName: "checkmark.seal.fill")
+                        Text("Emitir Propuesta Formal")
+                            .fontWeight(.semibold)
+                    }
                 }
                 .font(.subheadline)
                 .foregroundStyle(.white)
@@ -375,7 +396,7 @@ struct QuoteBuilderView: View {
                     in: RoundedRectangle(cornerRadius: 12, style: .continuous)
                 )
             }
-            .disabled(viewModel.componentesSeleccionados.isEmpty)
+            .disabled(viewModel.componentesSeleccionados.isEmpty || estaGenerandoPDF)
         }
         .padding(.horizontal, 20)
         .padding(.top, 16)
@@ -386,13 +407,50 @@ struct QuoteBuilderView: View {
                 .opacity(0.5)
         }
     }
+
+    // MARK: - Acción de Emisión y Exportación Local de PDF
+    private func emitirYCompartirPropuesta() {
+        // 1. Guardar en SwiftData
+        let nuevaCotizacion = viewModel.generarCotizacion()
+        modelContext.insert(nuevaCotizacion)
+
+        // 2. Guardar en CoreData y sincronizar con Firebase RTDB mediante HistorialManager
+        HistorialManager.shared.guardarCotizacion(
+            cliente: viewModel.clienteNombre,
+            montoTotal: viewModel.precioFinal
+        )
+
+        // 3. Tarea asíncrona para generar el PDF localmente
+        estaGenerandoPDF = true
+        Task {
+            do {
+                let urlPDF = try await QuotePDFManager.shared.generarYGuardarPDFLocal(
+                    cliente: viewModel.clienteNombre,
+                    subtotal: viewModel.subtotal,
+                    margen: viewModel.margenGanancia,
+                    totalFinal: viewModel.precioFinal,
+                    idCotizacion: nuevaCotizacion.id.uuidString
+                )
+
+                await MainActor.run {
+                    self.urlDocumentoPDF = urlPDF
+                    self.estaGenerandoPDF = false
+                    self.mostrarShareSheet = true
+                }
+            } catch {
+                await MainActor.run {
+                    self.estaGenerandoPDF = false
+                    print("❌ Error al exportar PDF: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
 }
 
 // MARK: - Subvista de Fila de Componente
 private struct ComponenteFilaView: View {
     let componente: Componente
     let accentColor: Color
-    let onRemove: () -> Void
 
     var body: some View {
         HStack(spacing: 14) {
@@ -441,18 +499,8 @@ private struct ComponenteFilaView: View {
                 .font(.subheadline.weight(.medium))
                 .monospacedDigit()
                 .foregroundStyle(.primary)
-
-            Button(role: .destructive, action: onRemove) {
-                Image(systemName: "minus.circle.fill")
-                    .symbolRenderingMode(.hierarchical)
-                    .font(.body)
-                    .foregroundStyle(.secondary)
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel("Eliminar \(componente.nombre)")
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 13)
+        .frame(height: 46)
     }
 
     private func icono(para categoria: CategoriaComponente) -> String {
@@ -460,65 +508,45 @@ private struct ComponenteFilaView: View {
         case .cpu: return "cpu"
         case .gpu: return "display"
         case .ram: return "memorychip"
-        case .placa: return "circuitboard"
+        case .placa: return "memorychip"
         case .fuente: return "bolt.horizontal.circle"
         }
     }
 }
 
-// MARK: - Hoja Modal de Catálogo de Piezas
-private struct CatalogoSelectorSheet: View {
-    @Environment(\.dismiss) private var dismiss
-    var viewModel: QuoteBuilderViewModel
-    let accentColor: Color
+// MARK: - Puente UIViewControllerRepresentable para el Historial de Cotizaciones
+struct HistorialCotizacionesViewRepresentable: UIViewControllerRepresentable {
+    func makeUIViewController(context: Context) -> UINavigationController {
+        let historialVC = HistorialCotizacionesViewController()
+        return UINavigationController(rootViewController: historialVC)
+    }
 
-    var body: some View {
-        NavigationStack {
-            List(QuoteBuilderViewModel.catalogoDisponible) { item in
-                Button {
-                    viewModel.agregarComponente(
-                        Componente(
-                            nombre: item.nombre,
-                            categoria: item.categoria,
-                            precioBase: item.precioBase,
-                            socket: item.socket,
-                            consumoWatts: item.consumoWatts,
-                            stock: item.stock
-                        )
-                    )
-                    dismiss()
-                } label: {
-                    HStack(spacing: 12) {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(item.nombre)
-                                .font(.subheadline.weight(.medium))
-                                .foregroundStyle(.primary)
+    func updateUIViewController(_ uiViewController: UINavigationController, context: Context) {}
+}
 
-                            Text("\(item.categoria.rawValue) • \(item.consumoWatts)W • Stock: \(item.stock)")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
+// MARK: - Puente UIViewControllerRepresentable para ShareSheet (UIActivityViewController)
+struct ShareSheet: UIViewControllerRepresentable {
+    let items: [Any]
+    var applicationActivities: [UIActivity]? = nil
 
-                        Spacer()
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        let controller = UIActivityViewController(
+            activityItems: items,
+            applicationActivities: applicationActivities
+        )
+        if let popover = controller.popoverPresentationController {
+            popover.sourceView = controller.view
+            popover.sourceRect = CGRect(x: UIScreen.main.bounds.midX, y: UIScreen.main.bounds.midY, width: 0, height: 0)
+            popover.permittedArrowDirections = []
+        }
+        return controller
+    }
 
-                        Text(item.precioBase, format: .currency(code: "USD"))
-                            .font(.subheadline.weight(.semibold))
-                            .monospacedDigit()
-                            .foregroundStyle(accentColor)
-                    }
-                    .padding(.vertical, 4)
-                }
-            }
-            .scrollContentBackground(.hidden)
-            .navigationTitle("Añadir Componente")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cerrar") {
-                        dismiss()
-                    }
-                }
-            }
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {
+        if let popover = uiViewController.popoverPresentationController {
+            popover.sourceView = uiViewController.view
+            popover.sourceRect = CGRect(x: UIScreen.main.bounds.midX, y: UIScreen.main.bounds.midY, width: 0, height: 0)
+            popover.permittedArrowDirections = []
         }
     }
 }

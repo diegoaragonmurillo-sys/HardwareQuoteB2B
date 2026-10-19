@@ -6,6 +6,12 @@
 	objectVersion = 110;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		B40DBB0A30849A65008F5051 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = B40DBB0930849A65008F5051 /* FirebaseAuth */; };
+		B40DBB0C30849A72008F5051 /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = B40DBB0B30849A72008F5051 /* FirebaseDatabase */; };
+		B40DBB0E30849A86008F5051 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = B40DBB0D30849A86008F5051 /* FirebaseStorage */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		B468759C308473C000588FFB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -51,6 +57,9 @@
 		B4687589308473BF00588FFB /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			files = (
+				B40DBB0C30849A72008F5051 /* FirebaseDatabase in Frameworks */,
+				B40DBB0A30849A65008F5051 /* FirebaseAuth in Frameworks */,
+				B40DBB0E30849A86008F5051 /* FirebaseStorage in Frameworks */,
 			);
 		};
 		B4687598308473C000588FFB /* Frameworks */ = {
@@ -66,12 +75,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B40DBB0830849A65008F5051 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		B4687583308473BF00588FFB = {
 			isa = PBXGroup;
 			children = (
 				B468758E308473BF00588FFB /* HardwareQuoteB2B */,
 				B468759E308473C000588FFB /* HardwareQuoteB2BTests */,
 				B46875A8308473C000588FFB /* HardwareQuoteB2BUITests */,
+				B40DBB0830849A65008F5051 /* Frameworks */,
 				B468758D308473BF00588FFB /* Products */,
 			);
 			sourceTree = "<group>";
@@ -103,6 +120,11 @@
 				B468758E308473BF00588FFB /* HardwareQuoteB2B */,
 			);
 			name = HardwareQuoteB2B;
+			packageProductDependencies = (
+				B40DBB0930849A65008F5051 /* FirebaseAuth */,
+				B40DBB0B30849A72008F5051 /* FirebaseDatabase */,
+				B40DBB0D30849A86008F5051 /* FirebaseStorage */,
+			);
 			productName = HardwareQuoteB2B;
 			productReference = B468758C308473BF00588FFB /* HardwareQuoteB2B.app */;
 			productType = "com.apple.product-type.application";
@@ -181,6 +203,9 @@
 			);
 			mainGroup = B4687583308473BF00588FFB;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B40DBB07308496FC008F5051 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B468758D308473BF00588FFB /* Products */;
 			projectDirPath = "";
@@ -371,6 +396,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Se requiere acceso al micrófono para adjuntar notas de voz técnicas y especificaciones de ensamblaje en las cotizaciones corporativas.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -402,6 +428,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Se requiere acceso al micrófono para adjuntar notas de voz técnicas y especificaciones de ensamblaje en las cotizaciones corporativas.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -540,6 +567,35 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B40DBB07308496FC008F5051 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 13.0.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B40DBB0930849A65008F5051 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B40DBB07308496FC008F5051 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		B40DBB0B30849A72008F5051 /* FirebaseDatabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B40DBB07308496FC008F5051 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseDatabase;
+		};
+		B40DBB0D30849A86008F5051 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B40DBB07308496FC008F5051 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B4687584308473BF00588FFB /* Project object */;
 	validationLevel = 1;

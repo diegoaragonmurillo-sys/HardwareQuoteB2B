@@ -13,6 +13,7 @@ final class QuoteBuilderViewModel {
     // MARK: - State
     var clienteNombre: String
     var componentesSeleccionados: [Componente]
+    var inventarioAlmacen: [Componente]
     var margenGanancia: Double // Ej: 0.18 = 18%
     var mostrarSelectorCatalogo: Bool = false
 
@@ -82,14 +83,22 @@ final class QuoteBuilderViewModel {
     init(
         clienteNombre: String = "Corporativo Enterprise S.A.",
         componentesSeleccionados: [Componente] = QuoteBuilderViewModel.componentesDemostracion,
+        inventarioAlmacen: [Componente] = QuoteBuilderViewModel.catalogoDisponible,
         margenGanancia: Double = 0.18
     ) {
         self.clienteNombre = clienteNombre
         self.componentesSeleccionados = componentesSeleccionados
+        self.inventarioAlmacen = inventarioAlmacen
         self.margenGanancia = margenGanancia
     }
 
     // MARK: - Actions
+    func registrarNuevoComponenteEnAlmacen(_ componente: Componente) {
+        withAnimation(.spring(response: 0.38, dampingFraction: 0.82)) {
+            inventarioAlmacen.insert(componente, at: 0)
+        }
+    }
+
     func agregarComponente(_ componente: Componente) {
         withAnimation(.spring(response: 0.38, dampingFraction: 0.82)) {
             componentesSeleccionados.append(componente)

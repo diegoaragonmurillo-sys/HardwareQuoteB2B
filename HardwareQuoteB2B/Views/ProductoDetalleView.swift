@@ -141,6 +141,7 @@ struct ProductoDetalleView: View {
     private var compatibilidad: some View {
         let enCotizacion = viewModel.componentesSeleccionados
             .filter { $0.id != componente.id }
+        let problemas = ValidadorCompatibilidad.validar(enCotizacion + [componente])
 
         return VStack(alignment: .leading, spacing: 12) {
             Text("Socket / Interfaz: \(componente.socket ?? "No especificado")")
@@ -151,6 +152,19 @@ struct ProductoDetalleView: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             } else {
+                if problemas.isEmpty {
+                    Label("Compatible con tu cotización actual", systemImage: "checkmark.seal.fill")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.green)
+                } else {
+                    ForEach(problemas) { problema in
+                        Label(problema.mensaje,
+                              systemImage: problema.severidad == .error ? "exclamationmark.octagon.fill" : "exclamationmark.triangle.fill")
+                            .font(.footnote)
+                            .foregroundStyle(problema.severidad == .error ? Color.red : Color.orange)
+                    }
+                }
+
                 ForEach(enCotizacion) { otro in
                     HStack {
                         Text(otro.nombre)

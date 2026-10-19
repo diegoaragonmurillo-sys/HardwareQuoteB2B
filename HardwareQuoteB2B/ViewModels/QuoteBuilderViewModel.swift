@@ -74,6 +74,15 @@ final class QuoteBuilderViewModel {
         }
     }
 
+    // MARK: - Compatibilidad
+    var problemasCompatibilidad: [ProblemaCompatibilidad] {
+        ValidadorCompatibilidad.validar(componentesSeleccionados)
+    }
+
+    var hayErroresCompatibilidad: Bool {
+        problemasCompatibilidad.contains { $0.severidad == .error }
+    }
+
     // MARK: - Computed Metrics (Pricing)
     var subtotal: Decimal {
         componentesSeleccionados.reduce(Decimal(0)) { $0 + $1.precioBase }

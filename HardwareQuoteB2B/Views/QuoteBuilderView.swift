@@ -19,6 +19,7 @@ struct QuoteBuilderView: View {
     @State private var mostrarShareSheet = false
     @State private var urlDocumentoPDF: URL?
     @State private var estaGenerandoPDF = false
+    @State private var mostrarAlertaCompatibilidad = false
 
     // Acento corporativo sutil (Azul Pizarra Ejecutivo)
     private let corporateAccent = Color(red: 0.20, green: 0.34, blue: 0.55)
@@ -34,6 +35,7 @@ struct QuoteBuilderView: View {
                         cabeceraPrincipalSection
                         headerClienteSection
                         medidorEnergiaCard
+                        alertasCompatibilidadSection
                         listadoPiezasSection
                         ControlNotasVozView(accentColor: corporateAccent)
                         margenComercialCard
@@ -51,6 +53,17 @@ struct QuoteBuilderView: View {
             // Sheet: Módulo UIKit Demostrativo (ComponentesViewController + DetalleComponenteViewController)
             .sheet(isPresented: $mostrarInspectorUIKit) {
                 ComponentesUIKitViewRepresentable(componentes: viewModel.inventarioAlmacen)
+            }
+            .alert("Problemas de compatibilidad", isPresented: $mostrarAlertaCompatibilidad) {
+                Button("Revisar configuración", role: .cancel) {}
+                Button("Emitir de todos modos", role: .destructive) {
+                    emitirYCompartirPropuesta()
+                }
+            } message: {
+                Text(viewModel.problemasCompatibilidad
+                    .filter { $0.severidad == .error }
+                    .map(\.mensaje)
+                    .joined(separator: "\n"))
             }
             // Sheet: Hoja nativa de compartir PDF (WhatsApp, Correo, Archivos)
             .sheet(isPresented: $mostrarShareSheet) {
@@ -135,6 +148,33 @@ struct QuoteBuilderView: View {
     }
 
     // MARK: - 2. Barra Interactiva Animada de Consumo en Watts
+    // MARK: - Alertas de Compatibilidad (socket y sobrecarga de Watts)
+    @ViewBuilder
+    private var alertasCompatibilidadSection: some View {
+        if !viewModel.problemasCompatibilidad.isEmpty {
+            VStack(alignment: .leading, spacing: 10) {
+                ForEach(viewModel.problemasCompatibilidad) { problema in
+                    let esError = problema.severidad == .error
+                    HStack(alignment: .top, spacing: 10) {
+                        Image(systemName: esError ? "exclamationmark.octagon.fill" : "exclamationmark.triangle.fill")
+                            .foregroundStyle(esError ? Color.red : Color.orange)
+                        Text(problema.mensaje)
+                            .font(.footnote)
+                            .foregroundStyle(.primary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+            }
+            .padding(16)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                (viewModel.hayErroresCompatibilidad ? Color.red : Color.orange).opacity(0.10),
+                in: RoundedRectangle(cornerRadius: 14, style: .continuous)
+            )
+            .accessibilityElement(children: .combine)
+        }
+    }
+
     private var medidorEnergiaCard: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack(alignment: .firstTextBaseline) {
@@ -434,7 +474,11 @@ struct QuoteBuilderView: View {
             .animation(.snappy(duration: 0.25), value: viewModel.precioFinal.aDouble)
 
             Button {
-                emitirYCompartirPropuesta()
+                if viewModel.hayErroresCompatibilidad {
+                    mostrarAlertaCompatibilidad = true
+                } else {
+                    emitirYCompartirPropuesta()
+                }
             } label: {
                 HStack(spacing: 8) {
                     if estaGenerandoPDF {

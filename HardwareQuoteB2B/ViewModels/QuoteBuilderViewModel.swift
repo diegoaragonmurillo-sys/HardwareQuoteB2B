@@ -14,12 +14,12 @@ final class QuoteBuilderViewModel {
     var clienteNombre: String
     var componentesSeleccionados: [Componente]
     var inventarioAlmacen: [Componente]
-    var margenGanancia: Double // Ej: 0.18 = 18%
+    var margenGanancia: Decimal // Ej: 0.18 = 18%
     var mostrarSelectorCatalogo: Bool = false
 
     // MARK: - Estado REST API (Tipo de Cambio B2B)
-    var tasaCambioUSD_MXN: Double = 1.0
-    var tasaCambioUSD_PEN: Double = 1.0
+    var tasaCambioUSD_MXN: Decimal = 1
+    var tasaCambioUSD_PEN: Decimal = 1
     var errorTipoCambio: Bool = false
     private let servicioTipoCambio: TipoCambioServicing
     private var contextoSwiftData: ModelContext?
@@ -75,20 +75,20 @@ final class QuoteBuilderViewModel {
     }
 
     // MARK: - Computed Metrics (Pricing)
-    var subtotal: Double {
-        componentesSeleccionados.reduce(0) { $0 + $1.precioBase }
+    var subtotal: Decimal {
+        componentesSeleccionados.reduce(Decimal(0)) { $0 + $1.precioBase }
     }
 
-    var utilidadComercial: Double {
-        subtotal * margenGanancia
+    var utilidadComercial: Decimal {
+        (subtotal * margenGanancia).redondeado()
     }
 
-    var precioFinal: Double {
+    var precioFinal: Decimal {
         subtotal + utilidadComercial
     }
 
-    var precioFinalMXN: Double {
-        precioFinal * tasaCambioUSD_MXN
+    var precioFinalMXN: Decimal {
+        (precioFinal * tasaCambioUSD_MXN).redondeado()
     }
 
     /// Línea de la cotización: un componente con su cantidad.
@@ -126,8 +126,8 @@ final class QuoteBuilderViewModel {
         }
     }
 
-    var precioFinalPEN: Double {
-        precioFinal * tasaCambioUSD_PEN
+    var precioFinalPEN: Decimal {
+        (precioFinal * tasaCambioUSD_PEN).redondeado()
     }
 
     // MARK: - Init
@@ -135,7 +135,7 @@ final class QuoteBuilderViewModel {
         clienteNombre: String = "Corporativo Enterprise S.A.",
         componentesSeleccionados: [Componente] = QuoteBuilderViewModel.componentesDemostracion,
         inventarioAlmacen: [Componente] = QuoteBuilderViewModel.catalogoDisponible,
-        margenGanancia: Double = 0.18,
+        margenGanancia: Decimal = Decimal(string: "0.18")!,
         servicioTipoCambio: TipoCambioServicing = TipoCambioService()
     ) {
         self.servicioTipoCambio = servicioTipoCambio
@@ -261,7 +261,7 @@ extension QuoteBuilderViewModel {
             Componente(
                 nombre: "AMD Ryzen 9 9950X 16-Core",
                 categoria: .cpu,
-                precioBase: 649.00,
+                precioBase: Decimal(string: "649.00")!,
                 socket: "AM5",
                 consumoWatts: 170,
                 stock: 14
@@ -269,7 +269,7 @@ extension QuoteBuilderViewModel {
             Componente(
                 nombre: "ASUS ProArt X870E-Creator WiFi",
                 categoria: .placa,
-                precioBase: 479.00,
+                precioBase: Decimal(string: "479.00")!,
                 socket: "AM5",
                 consumoWatts: 55,
                 stock: 9
@@ -277,7 +277,7 @@ extension QuoteBuilderViewModel {
             Componente(
                 nombre: "NVIDIA RTX 4500 Ada Generation 24GB",
                 categoria: .gpu,
-                precioBase: 2250.00,
+                precioBase: Decimal(string: "2250.00")!,
                 socket: "PCIe 4.0 x16",
                 consumoWatts: 210,
                 stock: 6
@@ -285,7 +285,7 @@ extension QuoteBuilderViewModel {
             Componente(
                 nombre: "Kingston Server Premier 64GB DDR5 ECC",
                 categoria: .ram,
-                precioBase: 289.00,
+                precioBase: Decimal(string: "289.00")!,
                 socket: "DDR5",
                 consumoWatts: 18,
                 stock: 22
@@ -293,7 +293,7 @@ extension QuoteBuilderViewModel {
             Componente(
                 nombre: "Seasonic PRIME TX-850 80+ Titanium",
                 categoria: .fuente,
-                precioBase: 279.00,
+                precioBase: Decimal(string: "279.00")!,
                 socket: "ATX 3.1",
                 consumoWatts: 850,
                 stock: 11
@@ -306,7 +306,7 @@ extension QuoteBuilderViewModel {
             Componente(
                 nombre: "Intel Xeon w7-2495X 24-Core",
                 categoria: .cpu,
-                precioBase: 2189.00,
+                precioBase: Decimal(string: "2189.00")!,
                 socket: "LGA4677",
                 consumoWatts: 225,
                 stock: 4
@@ -314,7 +314,7 @@ extension QuoteBuilderViewModel {
             Componente(
                 nombre: "NVIDIA RTX 6000 Ada Generation 48GB",
                 categoria: .gpu,
-                precioBase: 6800.00,
+                precioBase: Decimal(string: "6800.00")!,
                 socket: "PCIe 4.0 x16",
                 consumoWatts: 300,
                 stock: 3
@@ -322,7 +322,7 @@ extension QuoteBuilderViewModel {
             Componente(
                 nombre: "Corsair WS DDR5 RDIMM 128GB (4x32GB)",
                 categoria: .ram,
-                precioBase: 640.00,
+                precioBase: Decimal(string: "640.00")!,
                 socket: "DDR5",
                 consumoWatts: 32,
                 stock: 8
@@ -330,7 +330,7 @@ extension QuoteBuilderViewModel {
             Componente(
                 nombre: "Seasonic PRIME PX-1300 80+ Platinum",
                 categoria: .fuente,
-                precioBase: 369.00,
+                precioBase: Decimal(string: "369.00")!,
                 socket: "ATX 3.1",
                 consumoWatts: 1300,
                 stock: 7

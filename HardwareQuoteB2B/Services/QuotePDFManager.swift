@@ -35,11 +35,11 @@ public enum QuotePDFError: LocalizedError, Sendable {
 public struct LineaCotizacionPDF: Equatable, Sendable {
     public let cantidad: Int
     public let descripcion: String
-    public let precioUnitario: Double
+    public let precioUnitario: Decimal
 
-    public var total: Double { Double(cantidad) * precioUnitario }
+    public var total: Decimal { Decimal(cantidad) * precioUnitario }
 
-    public init(cantidad: Int, descripcion: String, precioUnitario: Double) {
+    public init(cantidad: Int, descripcion: String, precioUnitario: Decimal) {
         self.cantidad = cantidad
         self.descripcion = descripcion
         self.precioUnitario = precioUnitario
@@ -75,9 +75,9 @@ public final class QuotePDFManager: @unchecked Sendable {
     /// - Returns: URL local del archivo recién creado en la memoria interna del dispositivo.
     public func generarYGuardarPDFLocal(
         cliente: String,
-        subtotal: Double,
-        margen: Double,
-        totalFinal: Double,
+        subtotal: Decimal,
+        margen: Decimal,
+        totalFinal: Decimal,
         lineas: [LineaCotizacionPDF] = [],
         idCotizacion: String = UUID().uuidString
     ) async throws -> URL {
@@ -103,9 +103,9 @@ public final class QuotePDFManager: @unchecked Sendable {
     /// Dibuja los gráficos vectoriales y textos de la cotización usando `UIGraphicsPDFRenderer`.
     public func generarDatosPDF(
         cliente: String,
-        subtotal: Double,
-        margen: Double,
-        totalFinal: Double,
+        subtotal: Decimal,
+        margen: Decimal,
+        totalFinal: Decimal,
         lineas: [LineaCotizacionPDF] = [],
         idCotizacion: String
     ) throws -> Data {
@@ -255,9 +255,9 @@ public final class QuotePDFManager: @unchecked Sendable {
                         in: CGRect(x: colDescripcion, y: posY, width: anchoDescripcion, height: 14),
                         withAttributes: atributosFila
                     )
-                    let strPU = formateadorTabla.string(from: NSNumber(value: linea.precioUnitario)) ?? "$\(linea.precioUnitario)"
+                    let strPU = formateadorTabla.string(from: linea.precioUnitario.aNSNumber) ?? "$\(linea.precioUnitario)"
                     strPU.draw(at: CGPoint(x: colPrecioDerecha - strPU.size(withAttributes: atributosNumero).width, y: posY), withAttributes: atributosNumero)
-                    let strTT = formateadorTabla.string(from: NSNumber(value: linea.total)) ?? "$\(linea.total)"
+                    let strTT = formateadorTabla.string(from: linea.total.aNSNumber) ?? "$\(linea.total)"
                     strTT.draw(at: CGPoint(x: colTotalDerecha - strTT.size(withAttributes: atributosNumero).width, y: posY), withAttributes: atributosNumero)
 
                     posY += 18
@@ -292,11 +292,11 @@ public final class QuotePDFManager: @unchecked Sendable {
             formateadorMoneda.numberStyle = .currency
             formateadorMoneda.currencyCode = "USD"
 
-            let strSubtotal = formateadorMoneda.string(from: NSNumber(value: subtotal)) ?? "$\(subtotal)"
-            let strMargen = "+\(Int((margen * 100).rounded()))%"
-            let utilidadCalculada = subtotal * margen
-            let strUtilidad = formateadorMoneda.string(from: NSNumber(value: utilidadCalculada)) ?? "$\(utilidadCalculada)"
-            let strTotal = formateadorMoneda.string(from: NSNumber(value: totalFinal)) ?? "$\(totalFinal)"
+            let strSubtotal = formateadorMoneda.string(from: subtotal.aNSNumber) ?? "$\(subtotal)"
+            let strMargen = "+\(Int((margen * 100).redondeado(0).aDouble))%"
+            let utilidadCalculada = (subtotal * margen).redondeado()
+            let strUtilidad = formateadorMoneda.string(from: utilidadCalculada.aNSNumber) ?? "$\(utilidadCalculada)"
+            let strTotal = formateadorMoneda.string(from: totalFinal.aNSNumber) ?? "$\(totalFinal)"
 
             let filas: [(etiqueta: String, valor: String)] = [
                 ("Subtotal de Componentes Base", strSubtotal),
@@ -424,9 +424,9 @@ public final class QuotePDFManager: @unchecked Sendable {
 /// el ShareLink nativo de iOS para compartir por WhatsApp, Correo o guardar en Archivos.
 public struct ShareQuotePDFButton: View {
     public let cliente: String
-    public let subtotal: Double
-    public let margen: Double
-    public let totalFinal: Double
+    public let subtotal: Decimal
+    public let margen: Decimal
+    public let totalFinal: Decimal
     public var idCotizacion: String = UUID().uuidString
 
     @State private var pdfURL: URL?
@@ -438,9 +438,9 @@ public struct ShareQuotePDFButton: View {
 
     public init(
         cliente: String,
-        subtotal: Double,
-        margen: Double,
-        totalFinal: Double,
+        subtotal: Decimal,
+        margen: Decimal,
+        totalFinal: Decimal,
         idCotizacion: String = UUID().uuidString
     ) {
         self.cliente = cliente

@@ -22,7 +22,7 @@ final class ComponenteTableViewCell: UITableViewCell {
     func configure(with componente: Componente) {
         nombreLabel?.text = componente.nombre
         categoriaLabel?.text = componente.categoria.rawValue
-        precioLabel?.text = String(format: "$%.2f", componente.precioBase)
+        precioLabel?.text = "$\(componente.precioBase.textoDosDecimales)"
         stockLabel?.text = "Stock: \(componente.stock)"
 
         var specs = "\(componente.consumoWatts)W"

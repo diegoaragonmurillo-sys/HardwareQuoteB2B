@@ -22,7 +22,7 @@ final class LineaCotizacion {
         self.cantidad = cantidad
     }
 
-    var subtotal: Double {
-        Double(cantidad) * (componente?.precioBase ?? 0)
+    var subtotal: Decimal {
+        Decimal(cantidad) * (componente?.precioBase ?? 0)
     }
 }

@@ -317,6 +317,14 @@ struct QuoteBuilderView: View {
         }
     }
 
+    /// El `Slider` trabaja con Double; el dinero se conserva en Decimal.
+    private var margenComoDouble: Binding<Double> {
+        Binding(
+            get: { viewModel.margenGanancia.aDouble },
+            set: { viewModel.margenGanancia = Decimal(string: String(format: "%.2f", $0)) ?? 0 }
+        )
+    }
+
     // MARK: - 4. Control Reactivo de Margen Comercial
     private var margenComercialCard: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -328,13 +336,13 @@ struct QuoteBuilderView: View {
 
                 Spacer()
 
-                Text("\(Int((viewModel.margenGanancia * 100).rounded()))%")
+                Text("\(Int((viewModel.margenGanancia * 100).redondeado(0).aDouble))%")
                     .font(.title3.weight(.bold))
                     .monospacedDigit()
                     .foregroundStyle(corporateAccent)
             }
 
-            Slider(value: $viewModel.margenGanancia, in: 0.05...0.40, step: 0.01)
+            Slider(value: margenComoDouble, in: 0.05...0.40, step: 0.01)
                 .tint(corporateAccent)
 
             HStack {
@@ -372,7 +380,7 @@ struct QuoteBuilderView: View {
                         .font(.caption2)
                         .foregroundStyle(.red)
                 } else {
-                    Text("1 USD = \(String(format: "%.2f", viewModel.tasaCambioUSD_MXN)) MXN · \(String(format: "%.2f", viewModel.tasaCambioUSD_PEN)) PEN")
+                    Text("1 USD = \(viewModel.tasaCambioUSD_MXN.textoDosDecimales) MXN · \(viewModel.tasaCambioUSD_PEN.textoDosDecimales) PEN")
                         .font(.caption2.weight(.medium))
                         .monospacedDigit()
                         .foregroundStyle(.secondary)
@@ -401,21 +409,21 @@ struct QuoteBuilderView: View {
                             Text(viewModel.subtotal, format: .currency(code: "USD"))
                                 .font(.subheadline.weight(.medium))
                                 .monospacedDigit()
-                                .contentTransition(.numericText(value: viewModel.subtotal))
+                                .contentTransition(.numericText(value: viewModel.subtotal.aDouble))
                         }
 
                         Divider()
                             .frame(height: 24)
 
                         VStack(alignment: .leading, spacing: 2) {
-                            Text("Margen (+\(Int((viewModel.margenGanancia * 100).rounded()))%)")
+                            Text("Margen (+\(Int((viewModel.margenGanancia * 100).redondeado(0).aDouble))%)")
                                 .font(.caption2)
                                 .foregroundStyle(.secondary)
                             Text(viewModel.utilidadComercial, format: .currency(code: "USD"))
                                 .font(.subheadline.weight(.medium))
                                 .monospacedDigit()
                                 .foregroundStyle(corporateAccent)
-                                .contentTransition(.numericText(value: viewModel.utilidadComercial))
+                                .contentTransition(.numericText(value: viewModel.utilidadComercial.aDouble))
                         }
                     }
                 }
@@ -432,7 +440,7 @@ struct QuoteBuilderView: View {
                         .font(.title3.weight(.semibold))
                         .monospacedDigit()
                         .foregroundStyle(.primary)
-                        .contentTransition(.numericText(value: viewModel.precioFinal))
+                        .contentTransition(.numericText(value: viewModel.precioFinal.aDouble))
 
                     if !viewModel.errorTipoCambio && !viewModel.estaCargandoTasa {
                         Text(viewModel.precioFinalMXN, format: .currency(code: "MXN"))
@@ -446,7 +454,7 @@ struct QuoteBuilderView: View {
                     }
                 }
             }
-            .animation(.snappy(duration: 0.25), value: viewModel.precioFinal)
+            .animation(.snappy(duration: 0.25), value: viewModel.precioFinal.aDouble)
 
             Button {
                 emitirYCompartirPropuesta()

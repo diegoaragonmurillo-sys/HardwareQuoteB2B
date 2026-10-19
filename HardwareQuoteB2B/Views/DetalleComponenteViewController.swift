@@ -72,7 +72,7 @@ final class DetalleComponenteViewController: UIViewController {
         title = componente.nombre
         nombreLabel?.text = componente.nombre
         categoriaLabel?.text = "Categoría: \(componente.categoria.rawValue)"
-        precioLabel?.text = String(format: "Precio Base: $%.2f USD", componente.precioBase)
+        precioLabel?.text = "Precio Base: $\(componente.precioBase.textoDosDecimales) USD"
         socketLabel?.text = "Socket / Interfaz: \(componente.socket ?? "N/A")"
         consumoWattsLabel?.text = "Consumo / Capacidad: \(componente.consumoWatts) W"
         stockLabel?.text = "Disponibilidad: \(componente.stock) unidades"

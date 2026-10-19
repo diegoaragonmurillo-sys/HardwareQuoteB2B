@@ -21,7 +21,7 @@ final class Componente {
     @Attribute(.unique) var id: UUID
     var nombre: String
     var categoria: CategoriaComponente
-    var precioBase: Double
+    var precioBase: Decimal
     var socket: String?
     var consumoWatts: Int
     var stock: Int
@@ -33,7 +33,7 @@ final class Componente {
         id: UUID = UUID(),
         nombre: String,
         categoria: CategoriaComponente,
-        precioBase: Double,
+        precioBase: Decimal,
         socket: String? = nil,
         consumoWatts: Int,
         stock: Int

@@ -23,7 +23,7 @@ struct CrearComponenteFormView: View {
 
     private var formularioValido: Bool {
         let nombreLimpio = nombre.trimmingCharacters(in: .whitespacesAndNewlines)
-        let precio = Double(precioBaseTexto.replacingOccurrences(of: ",", with: ".")) ?? 0
+        let precio = Decimal(string: precioBaseTexto.replacingOccurrences(of: ",", with: ".")) ?? 0
         let watts = Int(consumoWattsTexto) ?? 0
         return !nombreLimpio.isEmpty && precio > 0 && watts > 0
     }
@@ -100,7 +100,7 @@ struct CrearComponenteFormView: View {
 
     private func guardarComponente() {
         let nombreFinal = nombre.trimmingCharacters(in: .whitespacesAndNewlines)
-        let precioFinal = Double(precioBaseTexto.replacingOccurrences(of: ",", with: ".")) ?? 0.0
+        let precioFinal = Decimal(string: precioBaseTexto.replacingOccurrences(of: ",", with: ".")) ?? 0
         let wattsFinal = Int(consumoWattsTexto) ?? 0
         let socketLimpio = socketDetalle.trimmingCharacters(in: .whitespacesAndNewlines)
 

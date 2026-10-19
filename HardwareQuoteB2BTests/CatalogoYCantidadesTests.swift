@@ -28,7 +28,7 @@ final class CatalogoYCantidadesTests: XCTestCase {
         )
     }
 
-    private func componente(_ nombre: String, precio: Double) -> Componente {
+    private func componente(_ nombre: String, precio: Decimal) -> Componente {
         Componente(nombre: nombre, categoria: .ram, precioBase: precio, consumoWatts: 5, stock: 10)
     }
 
@@ -95,5 +95,33 @@ final class CatalogoYCantidadesTests: XCTestCase {
 
         XCTAssertEqual(cotizacion.subtotal, 150, accuracy: 0.0001)
         XCTAssertEqual(cotizacion.total, 165, accuracy: 0.0001)
+    }
+}
+
+@MainActor
+final class PrecisionDecimalTests: XCTestCase {
+
+    func testSumaDeCentavos_conDecimal_esExacta() {
+        // Con Double, 0.1 + 0.2 != 0.3. Con Decimal sí.
+        let a = Decimal(string: "0.10")!
+        let b = Decimal(string: "0.20")!
+        XCTAssertEqual(a + b, Decimal(string: "0.30")!)
+    }
+
+    func testRedondeado_aCentavos() {
+        XCTAssertEqual(Decimal(string: "262.44655")!.redondeado(), Decimal(string: "262.45")!)
+        XCTAssertEqual(Decimal(string: "10.004")!.redondeado(), Decimal(string: "10.00")!)
+    }
+
+    func testTotalConMargen_conCentavos_esExactoSinError() {
+        let componente = Componente(
+            nombre: "X", categoria: .ram,
+            precioBase: Decimal(string: "649.99")!, consumoWatts: 1, stock: 1
+        )
+        let cotizacion = Cotizacion(
+            cliente: "C", componentes: [componente],
+            margenGanancia: Decimal(string: "0.10")!
+        )
+        XCTAssertEqual(cotizacion.total, Decimal(string: "714.99")!)
     }
 }

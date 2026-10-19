@@ -14,7 +14,7 @@ final class HardwareQuoteB2BTests: XCTestCase {
 
     // MARK: - SUT & Test Fixtures
     private var sutViewModel: QuoteBuilderViewModel!
-    private let precisionDelta: Double = 0.0001
+    private let precisionDelta: Decimal = 0
 
     // MARK: - Lifecycle
     override func setUpWithError() throws {
@@ -36,7 +36,7 @@ final class HardwareQuoteB2BTests: XCTestCase {
     private func crearComponente(
         nombre: String = "Componente Test",
         categoria: CategoriaComponente = .cpu,
-        precioBase: Double,
+        precioBase: Decimal,
         consumoWatts: Int = 100,
         stock: Int = 10
     ) -> Componente {
@@ -91,7 +91,7 @@ final class HardwareQuoteB2BTests: XCTestCase {
         let ram = crearComponente(nombre: "DDR5 32GB", categoria: .ram, precioBase: 159.25)
         sutViewModel.componentesSeleccionados = [cpu, gpu, ram]
 
-        let sumaEsperada = 649.00 + 1199.50 + 159.25 // 2007.75
+        let sumaEsperada = Decimal(string: "2007.75")!
 
         // Act
         let subtotalObtenido = sutViewModel.subtotal
@@ -149,7 +149,7 @@ final class HardwareQuoteB2BTests: XCTestCase {
         sutViewModel.componentesSeleccionados = [componente]
         sutViewModel.margenGanancia = 0.20 // 20%
 
-        let utilidadEsperada = 2500.00 * 0.20 // 500.00
+        let utilidadEsperada: Decimal = 500.00
 
         // Act
         let utilidad = sutViewModel.utilidadComercial
@@ -186,8 +186,8 @@ final class HardwareQuoteB2BTests: XCTestCase {
         sutViewModel.componentesSeleccionados = [cpu, ram] // Subtotal = 1000.00
         sutViewModel.margenGanancia = 0.18 // Utilidad = 180.00
 
-        let subtotalEsperado = 1000.00
-        let utilidadEsperada = 180.00
+        let subtotalEsperado: Decimal = 1000
+        let utilidadEsperada: Decimal = 180
         let precioFinalEsperado = subtotalEsperado + utilidadEsperada // 1180.00
 
         // Act
@@ -226,11 +226,11 @@ final class HardwareQuoteB2BTests: XCTestCase {
         let item2 = crearComponente(precioBase: 479.49)
         let item3 = crearComponente(precioBase: 289.15)
         sutViewModel.componentesSeleccionados = [item1, item2, item3]
-        sutViewModel.margenGanancia = 0.185 // 18.5%
+        sutViewModel.margenGanancia = Decimal(string: "0.185")! // 18.5%
 
-        let subtotalCalculado = 649.99 + 479.49 + 289.15 // 1418.63
-        let utilidadCalculada = subtotalCalculado * 0.185 // 262.44655
-        let totalEsperado = subtotalCalculado + utilidadCalculada // 1681.07655
+        let subtotalCalculado = Decimal(string: "1418.63")!
+        let utilidadCalculada = Decimal(string: "262.45")! // 262.44655 redondeado a centavos
+        let totalEsperado = Decimal(string: "1681.08")!
 
         // Act
         let subtotalActual = sutViewModel.subtotal
@@ -253,8 +253,8 @@ final class HardwareQuoteB2BTests: XCTestCase {
         sutViewModel.componentesSeleccionados = [cpu, fuente]
         sutViewModel.margenGanancia = 0.25 // 25%
 
-        let subtotalEsperado = 1000.00
-        let totalEsperado = 1250.00 // 1000 + (1000 * 0.25)
+        let subtotalEsperado: Decimal = 1000
+        let totalEsperado: Decimal = 1250 // 1000 + (1000 * 0.25)
 
         // Act
         let cotizacionGenerada = sutViewModel.generarCotizacion()
@@ -285,8 +285,8 @@ final class HardwareQuoteB2BTests: XCTestCase {
         cotizacion.margenGanancia = 0.20 // 20%
         cotizacion.recalcularTotales()
 
-        let nuevoSubtotalEsperado = 300.00
-        let nuevoTotalEsperado = 300.00 * 1.20 // 360.00
+        let nuevoSubtotalEsperado: Decimal = 300
+        let nuevoTotalEsperado: Decimal = 360
 
         // Assert
         XCTAssertEqual(cotizacion.subtotal, nuevoSubtotalEsperado, accuracy: precisionDelta, "El método recalcularTotales() debe actualizar el subtotal")

@@ -16,7 +16,7 @@ private struct ServicioFalsoSinRed: TipoCambioServicing {
 final class QuoteBuilderViewModelTests: XCTestCase {
 
     private var sut: QuoteBuilderViewModel!
-    private let precision: Double = 0.0001
+    private let precision: Decimal = 0
 
     override func setUpWithError() throws {
         try super.setUpWithError()
@@ -56,7 +56,7 @@ final class QuoteBuilderViewModelTests: XCTestCase {
         sut.componentesSeleccionados = [cpuMock, gpuMock]
 
         // Assert
-        let subtotalEsperado: Double = 2900.00 // 650.00 + 2250.00
+        let subtotalEsperado: Decimal = 2900.00 // 650.00 + 2250.00
         let wattsEsperados: Int = 380          // 170W + 210W
 
         XCTAssertEqual(
@@ -88,8 +88,8 @@ final class QuoteBuilderViewModelTests: XCTestCase {
         sut.margenGanancia = 0.20 // 20% de margen comercial
 
         // Assert
-        let utilidadEsperada: Double = 400.00   // 2000.00 * 0.20
-        let precioFinalEsperado: Double = 2400.00 // 2000.00 + 400.00
+        let utilidadEsperada: Decimal = 400.00   // 2000.00 * 0.20
+        let precioFinalEsperado: Decimal = 2400.00 // 2000.00 + 400.00
 
         XCTAssertEqual(
             sut.utilidadComercial,

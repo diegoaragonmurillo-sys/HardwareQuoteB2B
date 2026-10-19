@@ -200,7 +200,7 @@ extension ComponentesViewController: UITableViewDataSource, UITableViewDelegate 
         let fallbackCell = UITableViewCell(style: .subtitle, reuseIdentifier: "FallbackComponenteCell")
         fallbackCell.textLabel?.text = componente.nombre
         fallbackCell.textLabel?.font = .systemFont(ofSize: 15, weight: .semibold)
-        fallbackCell.detailTextLabel?.text = "\(componente.categoria.rawValue) • \(componente.consumoWatts)W • $\(String(format: "%.2f", componente.precioBase))"
+        fallbackCell.detailTextLabel?.text = "\(componente.categoria.rawValue) • \(componente.consumoWatts)W • $\(componente.precioBase.textoDosDecimales)"
         fallbackCell.accessoryType = .disclosureIndicator
         return fallbackCell
     }

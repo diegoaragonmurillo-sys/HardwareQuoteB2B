@@ -2,8 +2,8 @@ import Foundation
 
 /// Tasas de cambio con base USD obtenidas de la API.
 struct TasasCambioUSD: Equatable, Sendable {
-    let mxn: Double
-    let pen: Double
+    let mxn: Decimal
+    let pen: Decimal
     let fechaActualizacion: Date
 }
 
@@ -21,7 +21,7 @@ struct TipoCambioService: TipoCambioServicing {
     private struct Respuesta: Decodable {
         let result: String
         let timeLastUpdateUnix: TimeInterval
-        let rates: [String: Double]
+        let rates: [String: Decimal]
 
         enum CodingKeys: String, CodingKey {
             case result

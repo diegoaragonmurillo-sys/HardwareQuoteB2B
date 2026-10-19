@@ -14,9 +14,9 @@ final class Cotizacion {
     @Relationship var componentes: [Componente]
     /// Detalle con cantidad por componente. Si está vacío (cotizaciones antiguas) se usa `componentes`.
     @Relationship(deleteRule: .cascade) var lineas: [LineaCotizacion] = []
-    var margenGanancia: Double
-    var subtotal: Double
-    var total: Double
+    var margenGanancia: Decimal
+    var subtotal: Decimal
+    var total: Decimal
 
     init(
         id: UUID = UUID(),
@@ -24,9 +24,9 @@ final class Cotizacion {
         fecha: Date = .now,
         componentes: [Componente] = [],
         lineas: [LineaCotizacion] = [],
-        margenGanancia: Double = 0.0,
-        subtotal: Double? = nil,
-        total: Double? = nil
+        margenGanancia: Decimal = 0,
+        subtotal: Decimal? = nil,
+        total: Decimal? = nil
     ) {
         self.id = id
         self.cliente = cliente
@@ -37,15 +37,15 @@ final class Cotizacion {
 
         let subtotalCalculado = subtotal ?? Self.calcularSubtotal(lineas: lineas, componentes: componentes)
         self.subtotal = subtotalCalculado
-        self.total = total ?? (subtotalCalculado * (1 + margenGanancia))
+        self.total = total ?? (subtotalCalculado * (1 + margenGanancia)).redondeado()
     }
 
     func recalcularTotales() {
         subtotal = Self.calcularSubtotal(lineas: lineas, componentes: componentes)
-        total = subtotal * (1 + margenGanancia)
+        total = (subtotal * (1 + margenGanancia)).redondeado()
     }
 
-    private static func calcularSubtotal(lineas: [LineaCotizacion], componentes: [Componente]) -> Double {
+    private static func calcularSubtotal(lineas: [LineaCotizacion], componentes: [Componente]) -> Decimal {
         if lineas.isEmpty {
             return componentes.reduce(0) { $0 + $1.precioBase }
         }

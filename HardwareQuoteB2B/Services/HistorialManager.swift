@@ -100,7 +100,7 @@ final class HistorialManager {
     func guardarCotizacion(
         id: UUID = UUID(),
         cliente: String,
-        montoTotal: Double,
+        montoTotal: Decimal,
         fecha: Date = Date(),
         completion: ((Bool) -> Void)? = nil
     ) {
@@ -117,7 +117,7 @@ final class HistorialManager {
         let idUUID = id
         nuevaCotizacion.setValue(idUUID, forKey: "id")
         nuevaCotizacion.setValue(clienteFinal, forKey: "cliente")
-        nuevaCotizacion.setValue(montoTotal, forKey: "montoTotal")
+        nuevaCotizacion.setValue(montoTotal.aDouble, forKey: "montoTotal")
         nuevaCotizacion.setValue(fecha, forKey: "fecha")
 
         do {
@@ -188,7 +188,7 @@ final class HistorialManager {
     private func sincronizarConFirebaseRTDB(
         id: String,
         cliente: String,
-        montoTotal: Double,
+        montoTotal: Decimal,
         fecha: Date,
         completion: ((Bool) -> Void)? = nil
     ) {
@@ -201,7 +201,7 @@ final class HistorialManager {
         let payload: [String: Any] = [
             "idLocal": id,
             "cliente": cliente,
-            "montoTotal": montoTotal,
+            "montoTotal": montoTotal.aDouble,
             "fechaISO": ISO8601DateFormatter().string(from: fecha),
             "timestamp": Int64(fecha.timeIntervalSince1970 * 1000)
         ]

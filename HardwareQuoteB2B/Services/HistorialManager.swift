@@ -8,58 +8,7 @@
 import Foundation
 import CoreData
 
-#if canImport(FirebaseDatabase)
 import FirebaseDatabase
-#else
-// MARK: - Firebase Realtime Database Stub (Fallback para compilación antes de vincular SPM)
-public final class DatabaseReference {
-    public let key: String?
-    private let path: String
-
-    init(path: String = "", key: String? = nil) {
-        self.path = path
-        self.key = key
-    }
-
-    public func child(_ pathString: String) -> DatabaseReference {
-        let clean = path.isEmpty ? pathString : "\(path)/\(pathString)"
-        return DatabaseReference(path: clean, key: pathString)
-    }
-
-    public func childByAutoId() -> DatabaseReference {
-        let generatedKey = UUID().uuidString
-        return DatabaseReference(path: "\(path)/\(generatedKey)", key: generatedKey)
-    }
-
-    public func setValue(_ value: Any?, withCompletionBlock block: ((Error?, DatabaseReference) -> Void)? = nil) {
-        print("📡 [Firebase RTDB Stub] Sincronizando en nodo '/\(path)':")
-        if let val = value {
-            print("   \(val)")
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
-            guard let self else { return }
-            block?(nil, self)
-        }
-    }
-
-    public func removeValue(completionBlock block: ((Error?, DatabaseReference) -> Void)? = nil) {
-        print("🗑️ [Firebase RTDB Stub] Eliminando nodo '/\(path)'")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
-            guard let self else { return }
-            block?(nil, self)
-        }
-    }
-}
-
-public final class Database {
-    public static let shared = Database()
-    public static func database() -> Database { shared }
-
-    public func reference() -> DatabaseReference {
-        return DatabaseReference()
-    }
-}
-#endif
 
 extension Notification.Name {
     static let historialCotizacionesActualizado = Notification.Name("historialCotizacionesActualizado")

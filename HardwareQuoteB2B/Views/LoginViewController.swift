@@ -352,7 +352,7 @@ final class LoginViewController: UIViewController {
     // MARK: - Transición a SwiftUI (UIHostingController)
     private func navegarAVistaPrincipalSwiftUI() {
         let mainSwiftUIView = QuoteBuilderView()
-            .modelContainer(for: [Cotizacion.self, Componente.self])
+            .modelContainer(PersistenciaSwiftData.contenedor)
         let hostingController = UIHostingController(rootView: mainSwiftUIView)
 
         if let window = view.window {

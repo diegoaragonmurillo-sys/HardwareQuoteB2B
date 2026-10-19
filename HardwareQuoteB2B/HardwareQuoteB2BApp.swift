@@ -20,7 +20,7 @@ struct HardwareQuoteB2BApp: App {
         WindowGroup {
             LoginViewControllerWrapper()
                 .ignoresSafeArea()
-                .modelContainer(for: [Cotizacion.self, Componente.self])
+                .modelContainer(PersistenciaSwiftData.contenedor)
         }
     }
 }

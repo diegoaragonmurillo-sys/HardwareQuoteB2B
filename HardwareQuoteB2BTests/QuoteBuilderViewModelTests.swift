@@ -6,6 +6,12 @@
 import XCTest
 @testable import HardwareQuoteB2B
 
+private struct ServicioFalsoSinRed: TipoCambioServicing {
+    func obtenerTasas() async throws -> TasasCambioUSD {
+        TasasCambioUSD(mxn: 1, pen: 1, fechaActualizacion: Date())
+    }
+}
+
 @MainActor
 final class QuoteBuilderViewModelTests: XCTestCase {
 
@@ -17,7 +23,8 @@ final class QuoteBuilderViewModelTests: XCTestCase {
         sut = QuoteBuilderViewModel(
             clienteNombre: "Corporativo Test B2B",
             componentesSeleccionados: [],
-            margenGanancia: 0.0
+            margenGanancia: 0.0,
+            servicioTipoCambio: ServicioFalsoSinRed()
         )
     }
 

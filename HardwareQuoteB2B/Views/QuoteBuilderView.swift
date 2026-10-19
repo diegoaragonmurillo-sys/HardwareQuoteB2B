@@ -349,11 +349,15 @@ struct QuoteBuilderView: View {
                     .foregroundStyle(corporateAccent)
 
                 if viewModel.estaCargandoTasa {
-                    Text("Consultando tipo de cambio oficial B2B (REST API)...")
+                    Text("Consultando tipo de cambio (REST API)...")
                         .font(.caption2)
                         .foregroundStyle(.secondary)
+                } else if viewModel.errorTipoCambio {
+                    Text("Tipo de cambio no disponible. Revisa tu conexión.")
+                        .font(.caption2)
+                        .foregroundStyle(.red)
                 } else {
-                    Text("Tipo de cambio oficial B2B (REST API): 1 USD = $\(String(format: "%.2f", viewModel.tasaCambioUSD_MXN)) MXN")
+                    Text("1 USD = \(String(format: "%.2f", viewModel.tasaCambioUSD_MXN)) MXN · \(String(format: "%.2f", viewModel.tasaCambioUSD_PEN)) PEN")
                         .font(.caption2.weight(.medium))
                         .monospacedDigit()
                         .foregroundStyle(.secondary)
@@ -414,6 +418,17 @@ struct QuoteBuilderView: View {
                         .monospacedDigit()
                         .foregroundStyle(.primary)
                         .contentTransition(.numericText(value: viewModel.precioFinal))
+
+                    if !viewModel.errorTipoCambio && !viewModel.estaCargandoTasa {
+                        Text(viewModel.precioFinalMXN, format: .currency(code: "MXN"))
+                            .font(.caption.weight(.medium))
+                            .monospacedDigit()
+                            .foregroundStyle(.secondary)
+                        Text(viewModel.precioFinalPEN, format: .currency(code: "PEN"))
+                            .font(.caption.weight(.medium))
+                            .monospacedDigit()
+                            .foregroundStyle(.secondary)
+                    }
                 }
             }
             .animation(.snappy(duration: 0.25), value: viewModel.precioFinal)

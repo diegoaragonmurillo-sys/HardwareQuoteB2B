@@ -19,6 +19,9 @@ final class QuoteBuilderViewModel {
 
     // MARK: - Estado REST API (Tipo de Cambio B2B)
     var tasaCambioUSD_MXN: Double = 1.0
+    var tasaCambioUSD_PEN: Double = 1.0
+    var errorTipoCambio: Bool = false
+    private let servicioTipoCambio: TipoCambioServicing
     var estaCargandoTasa: Bool = false
 
     // MARK: - Computed Metrics (Watts & Power)
@@ -87,13 +90,19 @@ final class QuoteBuilderViewModel {
         precioFinal * tasaCambioUSD_MXN
     }
 
+    var precioFinalPEN: Double {
+        precioFinal * tasaCambioUSD_PEN
+    }
+
     // MARK: - Init
     init(
         clienteNombre: String = "Corporativo Enterprise S.A.",
         componentesSeleccionados: [Componente] = QuoteBuilderViewModel.componentesDemostracion,
         inventarioAlmacen: [Componente] = QuoteBuilderViewModel.catalogoDisponible,
-        margenGanancia: Double = 0.18
+        margenGanancia: Double = 0.18,
+        servicioTipoCambio: TipoCambioServicing = TipoCambioService()
     ) {
+        self.servicioTipoCambio = servicioTipoCambio
         self.clienteNombre = clienteNombre
         self.componentesSeleccionados = componentesSeleccionados
         self.inventarioAlmacen = inventarioAlmacen
@@ -106,17 +115,16 @@ final class QuoteBuilderViewModel {
         estaCargandoTasa = true
         Task {
             do {
-                let clienteREST = HardwareExchangeRateClient()
-                let respuesta = try await clienteREST.consultarTipoCambioHardware(
-                    monedaBase: "USD",
-                    monedaDestino: "MXN"
-                )
+                let tasas = try await servicioTipoCambio.obtenerTasas()
                 await MainActor.run {
-                    self.tasaCambioUSD_MXN = respuesta.tasaEfectiva
+                    self.tasaCambioUSD_MXN = tasas.mxn
+                    self.tasaCambioUSD_PEN = tasas.pen
+                    self.errorTipoCambio = false
                     self.estaCargandoTasa = false
                 }
             } catch {
                 await MainActor.run {
+                    self.errorTipoCambio = true
                     self.estaCargandoTasa = false
                 }
             }

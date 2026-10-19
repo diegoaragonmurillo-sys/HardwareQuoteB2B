@@ -158,15 +158,8 @@ struct CatalogoHardwareView: View {
 
     // MARK: - Acción para añadir al ViewModel principal
     private func agregarAlCotizador(_ item: Componente) {
-        let nuevaPieza = Componente(
-            nombre: item.nombre,
-            categoria: item.categoria,
-            precioBase: item.precioBase,
-            socket: item.socket,
-            consumoWatts: item.consumoWatts,
-            stock: item.stock
-        )
-        viewModel.agregarComponente(nuevaPieza)
+        // Se agrega la misma instancia del catálogo (no una copia) para que la cantidad se agrupe por producto.
+        viewModel.agregarComponente(item)
 
         withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
             ultimoComponenteAgregado = item.nombre

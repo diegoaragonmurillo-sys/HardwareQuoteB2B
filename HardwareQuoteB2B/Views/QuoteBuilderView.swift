@@ -12,10 +12,9 @@ import UIKit
 
 struct QuoteBuilderView: View {
     @Environment(\.modelContext) private var modelContext
-    @State private var viewModel = QuoteBuilderViewModel()
+    @Bindable var viewModel: QuoteBuilderViewModel
 
     // MARK: - Variables de Estado de Navegación y Exportación
-    @State private var mostrarHistorial = false
     @State private var mostrarInspectorUIKit = false
     @State private var mostrarShareSheet = false
     @State private var urlDocumentoPDF: URL?
@@ -46,13 +45,8 @@ struct QuoteBuilderView: View {
                 .scrollIndicators(.hidden)
             }
             .toolbar(.hidden, for: .navigationBar)
-            .onAppear { viewModel.configurarPersistencia(modelContext) }
             .safeAreaInset(edge: .bottom) {
                 resumenFinancieroFlotante
-            }
-            // Sheet: Historial de Cotizaciones (CoreData + Firebase RTDB vía HistorialManager)
-            .sheet(isPresented: $mostrarHistorial) {
-                HistorialCotizacionesViewRepresentable()
             }
             // Sheet: Módulo UIKit Demostrativo (ComponentesViewController + DetalleComponenteViewController)
             .sheet(isPresented: $mostrarInspectorUIKit) {
@@ -93,23 +87,6 @@ struct QuoteBuilderView: View {
                     .background(corporateAccent.opacity(0.10), in: Circle())
             }
             .accessibilityLabel("Abrir catálogo demostrativo UIKit")
-
-            // Botón de Historial
-            Button {
-                mostrarHistorial = true
-            } label: {
-                HStack(spacing: 5) {
-                    Image(systemName: "clock.arrow.circlepath")
-                        .font(.subheadline.weight(.semibold))
-                    Text("Historial")
-                        .font(.footnote.weight(.semibold))
-                }
-                .foregroundStyle(corporateAccent)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
-                .background(corporateAccent.opacity(0.10), in: Capsule())
-            }
-            .accessibilityLabel("Ver historial de cotizaciones")
 
             // Puente NavigationLink hacia CatalogoHardwareView
             NavigationLink {
@@ -660,6 +637,6 @@ struct ShareSheet: UIViewControllerRepresentable {
 }
 
 #Preview {
-    QuoteBuilderView()
+    QuoteBuilderView(viewModel: QuoteBuilderViewModel())
         .modelContainer(for: [Componente.self, Cotizacion.self, LineaCotizacion.self], inMemory: true)
 }

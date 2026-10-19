@@ -12,6 +12,8 @@ struct CatalogoHardwareView: View {
 
     var viewModel: QuoteBuilderViewModel
     var accentColor: Color = Color(red: 0.20, green: 0.34, blue: 0.55)
+    /// En una pestaña raíz no hay a dónde volver, así que se oculta.
+    var mostrarBotonListo: Bool = true
 
     @State private var textoBusqueda: String = ""
     @State private var categoriaSeleccionada: CategoriaComponente? = nil
@@ -94,11 +96,13 @@ struct CatalogoHardwareView: View {
                     }
                     .accessibilityLabel("Registrar nuevo componente en almacén")
 
-                    Button("Listo") {
-                        dismiss()
+                    if mostrarBotonListo {
+                        Button("Listo") {
+                            dismiss()
+                        }
+                        .fontWeight(.semibold)
+                        .foregroundStyle(accentColor)
                     }
-                    .fontWeight(.semibold)
-                    .foregroundStyle(accentColor)
                 }
             }
         }

@@ -213,7 +213,7 @@ final class HistorialManager {
             completion?(true)
 
             if let idUUID = idUUID {
-                Database.database()
+                FirebaseDatabaseProvider.instance
                     .reference()
                     .child("historial_cotizaciones")
                     .child(idUUID.uuidString)
@@ -244,7 +244,7 @@ final class HistorialManager {
         completion: ((Bool) -> Void)? = nil
     ) {
         // Uso determinista de .child(id) en lugar de .childByAutoId() para garantizar clave 1:1 con CoreData
-        let nodoRegistro = Database.database()
+        let nodoRegistro = FirebaseDatabaseProvider.instance
             .reference()
             .child("historial_cotizaciones")
             .child(id)

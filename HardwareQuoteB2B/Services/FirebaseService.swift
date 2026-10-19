@@ -411,7 +411,7 @@ public final class FirebaseService: FirebaseServiceProtocol, @unchecked Sendable
     public func emitirEstadoCotizacion(_ actualizacion: ActualizacionEstadoCotizacion) async throws {
         #if canImport(FirebaseDatabase)
         do {
-            let ref = Database.database().reference()
+            let ref = FirebaseDatabaseProvider.instance.reference()
             let rutaCotizacion = ref.child("cotizaciones").child(actualizacion.idCotizacion)
 
             // Actualizar nodo estado actual y registrar historial cronológico

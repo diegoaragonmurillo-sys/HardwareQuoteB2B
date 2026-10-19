@@ -22,6 +22,7 @@ final class QuoteBuilderViewModel {
     var tasaCambioUSD_PEN: Double = 1.0
     var errorTipoCambio: Bool = false
     private let servicioTipoCambio: TipoCambioServicing
+    private var contextoSwiftData: ModelContext?
     var estaCargandoTasa: Bool = false
 
     // MARK: - Computed Metrics (Watts & Power)
@@ -90,26 +91,38 @@ final class QuoteBuilderViewModel {
         precioFinal * tasaCambioUSD_MXN
     }
 
-    /// Componentes agrupados por producto (cantidad × precio unitario) para la tabla del PDF.
-    var lineasParaPDF: [LineaCotizacionPDF] {
+    /// Línea de la cotización: un componente con su cantidad.
+    struct LineaSeleccion: Identifiable {
+        let componente: Componente
+        let cantidad: Int
+        var id: UUID { componente.id }
+    }
+
+    /// Componentes seleccionados agrupados por producto, en orden de inserción.
+    var lineasSeleccionadas: [LineaSeleccion] {
         var orden: [UUID] = []
-        var agrupados: [UUID: (componente: Componente, cantidad: Int)] = [:]
+        var conteo: [UUID: (componente: Componente, cantidad: Int)] = [:]
         for componente in componentesSeleccionados {
-            if let existente = agrupados[componente.id] {
-                agrupados[componente.id] = (existente.componente, existente.cantidad + 1)
+            if let existente = conteo[componente.id] {
+                conteo[componente.id] = (existente.componente, existente.cantidad + 1)
             } else {
                 orden.append(componente.id)
-                agrupados[componente.id] = (componente, 1)
+                conteo[componente.id] = (componente, 1)
             }
         }
         return orden.compactMap { id in
-            agrupados[id].map {
-                LineaCotizacionPDF(
-                    cantidad: $0.cantidad,
-                    descripcion: $0.componente.nombre,
-                    precioUnitario: $0.componente.precioBase
-                )
-            }
+            conteo[id].map { LineaSeleccion(componente: $0.componente, cantidad: $0.cantidad) }
+        }
+    }
+
+    /// Líneas para la tabla del PDF (cantidad × precio unitario).
+    var lineasParaPDF: [LineaCotizacionPDF] {
+        lineasSeleccionadas.map {
+            LineaCotizacionPDF(
+                cantidad: $0.cantidad,
+                descripcion: $0.componente.nombre,
+                precioUnitario: $0.componente.precioBase
+            )
         }
     }
 
@@ -155,9 +168,56 @@ final class QuoteBuilderViewModel {
     }
 
     // MARK: - Actions
+    /// Conecta el catálogo con SwiftData. En el primer arranque siembra el catálogo de referencia;
+    /// después carga el catálogo persistido (incluidos los componentes que el usuario haya creado).
+    func configurarPersistencia(_ contexto: ModelContext) {
+        guard contextoSwiftData == nil else { return }
+        contextoSwiftData = contexto
+
+        let descriptor = FetchDescriptor<Componente>(sortBy: [SortDescriptor(\.nombre)])
+        let guardados = (try? contexto.fetch(descriptor)) ?? []
+
+        if guardados.isEmpty {
+            let nombresSeleccionados = Set(componentesSeleccionados.map(\.nombre))
+            let extras = Self.catalogoDisponible.filter { !nombresSeleccionados.contains($0.nombre) }
+            var vistos = Set<UUID>()
+            let catalogo = (componentesSeleccionados + extras).filter { vistos.insert($0.id).inserted }
+            catalogo.forEach { contexto.insert($0) }
+            try? contexto.save()
+            inventarioAlmacen = catalogo
+        } else {
+            inventarioAlmacen = guardados
+            componentesSeleccionados = componentesSeleccionados.compactMap { seleccionado in
+                guardados.first { $0.nombre == seleccionado.nombre }
+            }
+        }
+    }
+
     func registrarNuevoComponenteEnAlmacen(_ componente: Componente) {
+        contextoSwiftData?.insert(componente)
+        try? contextoSwiftData?.save()
         withAnimation(.spring(response: 0.38, dampingFraction: 0.82)) {
             inventarioAlmacen.insert(componente, at: 0)
+        }
+    }
+
+    func incrementarCantidad(_ componente: Componente) {
+        agregarComponente(componente)
+    }
+
+    /// Quita una unidad; si era la última, elimina la línea.
+    func decrementarCantidad(_ componente: Componente) {
+        guard let indice = componentesSeleccionados.firstIndex(where: { $0.id == componente.id }) else { return }
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
+            _ = componentesSeleccionados.remove(at: indice)
+        }
+    }
+
+    func eliminarLineas(en offsets: IndexSet) {
+        let lineas = lineasSeleccionadas
+        let ids = Set(offsets.compactMap { lineas.indices.contains($0) ? lineas[$0].id : nil })
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
+            componentesSeleccionados.removeAll { ids.contains($0.id) }
         }
     }
 
@@ -180,10 +240,13 @@ final class QuoteBuilderViewModel {
     }
 
     func generarCotizacion() -> Cotizacion {
-        Cotizacion(
+        var vistos = Set<UUID>()
+        let distintos = componentesSeleccionados.filter { vistos.insert($0.id).inserted }
+        return Cotizacion(
             cliente: clienteNombre.isEmpty ? "Cliente Corporativo" : clienteNombre,
             fecha: .now,
-            componentes: componentesSeleccionados,
+            componentes: distintos,
+            lineas: lineasSeleccionadas.map { LineaCotizacion(componente: $0.componente, cantidad: $0.cantidad) },
             margenGanancia: margenGanancia,
             subtotal: subtotal,
             total: precioFinal

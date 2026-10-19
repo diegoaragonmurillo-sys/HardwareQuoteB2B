@@ -46,6 +46,7 @@ struct QuoteBuilderView: View {
                 .scrollIndicators(.hidden)
             }
             .toolbar(.hidden, for: .navigationBar)
+            .onAppear { viewModel.configurarPersistencia(modelContext) }
             .safeAreaInset(edge: .bottom) {
                 resumenFinancieroFlotante
             }
@@ -278,20 +279,34 @@ struct QuoteBuilderView: View {
                 .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
             } else {
                 List {
-                    ForEach(viewModel.componentesSeleccionados) { componente in
-                        ComponenteFilaView(
-                            componente: componente,
-                            accentColor: corporateAccent
-                        )
+                    ForEach(viewModel.lineasSeleccionadas) { linea in
+                        HStack(spacing: 8) {
+                            ComponenteFilaView(
+                                componente: linea.componente,
+                                accentColor: corporateAccent
+                            )
+                            Stepper(
+                                "Cantidad",
+                                onIncrement: { viewModel.incrementarCantidad(linea.componente) },
+                                onDecrement: { viewModel.decrementarCantidad(linea.componente) }
+                            )
+                            .labelsHidden()
+                            .fixedSize()
+                            Text("×\(linea.cantidad)")
+                                .font(.subheadline.weight(.semibold))
+                                .monospacedDigit()
+                                .frame(minWidth: 28)
+                                .accessibilityLabel("Cantidad \(linea.cantidad)")
+                        }
                         .listRowInsets(EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16))
                         .listRowBackground(Color.clear)
                     }
-                    .onDelete(perform: viewModel.eliminarComponentes)
+                    .onDelete(perform: viewModel.eliminarLineas)
                 }
                 .listStyle(.plain)
                 .scrollContentBackground(.hidden)
                 .scrollDisabled(true)
-                .frame(height: CGFloat(viewModel.componentesSeleccionados.count) * 66)
+                .frame(height: CGFloat(viewModel.lineasSeleccionadas.count) * 66)
                 .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
                 .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                 .overlay(
@@ -638,5 +653,5 @@ struct ShareSheet: UIViewControllerRepresentable {
 
 #Preview {
     QuoteBuilderView()
-        .modelContainer(for: [Componente.self, Cotizacion.self], inMemory: true)
+        .modelContainer(for: [Componente.self, Cotizacion.self, LineaCotizacion.self], inMemory: true)
 }

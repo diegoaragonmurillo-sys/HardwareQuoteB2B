@@ -4,7 +4,7 @@ import SwiftData
 enum PersistenciaSwiftData {
     static let contenedor: ModelContainer = {
         do {
-            return try ModelContainer(for: Cotizacion.self, Componente.self)
+            return try ModelContainer(for: Cotizacion.self, Componente.self, LineaCotizacion.self)
         } catch {
             fatalError("No se pudo crear el ModelContainer: \(error)")
         }

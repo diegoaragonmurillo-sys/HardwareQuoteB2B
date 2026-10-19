@@ -264,7 +264,8 @@ extension QuoteBuilderViewModel {
                 precioBase: Decimal(string: "649.00")!,
                 socket: "AM5",
                 consumoWatts: 170,
-                stock: 14
+                stock: 14,
+                descripcion: "Procesador de 16 núcleos y 32 hilos para estaciones de trabajo de alto rendimiento. Socket AM5 con soporte DDR5."
             ),
             Componente(
                 nombre: "ASUS ProArt X870E-Creator WiFi",
@@ -272,7 +273,8 @@ extension QuoteBuilderViewModel {
                 precioBase: Decimal(string: "479.00")!,
                 socket: "AM5",
                 consumoWatts: 55,
-                stock: 9
+                stock: 9,
+                descripcion: "Placa base AM5 para creadores y estaciones de trabajo: DDR5, PCIe 5.0, Wi-Fi 7 y conectividad 10 GbE."
             ),
             Componente(
                 nombre: "NVIDIA RTX 4500 Ada Generation 24GB",
@@ -280,7 +282,8 @@ extension QuoteBuilderViewModel {
                 precioBase: Decimal(string: "2250.00")!,
                 socket: "PCIe 4.0 x16",
                 consumoWatts: 210,
-                stock: 6
+                stock: 6,
+                descripcion: "GPU profesional con 24 GB de memoria para renderizado, simulación e IA en estaciones de trabajo."
             ),
             Componente(
                 nombre: "Kingston Server Premier 64GB DDR5 ECC",
@@ -288,7 +291,8 @@ extension QuoteBuilderViewModel {
                 precioBase: Decimal(string: "289.00")!,
                 socket: "DDR5",
                 consumoWatts: 18,
-                stock: 22
+                stock: 22,
+                descripcion: "Módulo de memoria DDR5 de 64 GB con corrección de errores (ECC) para equipos que requieren estabilidad continua."
             ),
             Componente(
                 nombre: "Seasonic PRIME TX-850 80+ Titanium",
@@ -296,7 +300,8 @@ extension QuoteBuilderViewModel {
                 precioBase: Decimal(string: "279.00")!,
                 socket: "ATX 3.1",
                 consumoWatts: 850,
-                stock: 11
+                stock: 11,
+                descripcion: "Fuente ATX 3.1 de 850 W con certificación 80+ Titanium, de alta eficiencia y bajo ruido."
             )
         ]
     }
@@ -309,7 +314,8 @@ extension QuoteBuilderViewModel {
                 precioBase: Decimal(string: "2189.00")!,
                 socket: "LGA4677",
                 consumoWatts: 225,
-                stock: 4
+                stock: 4,
+                descripcion: "Procesador Xeon de 24 núcleos para estaciones de trabajo, socket LGA4677 con memoria DDR5 ECC."
             ),
             Componente(
                 nombre: "NVIDIA RTX 6000 Ada Generation 48GB",
@@ -317,7 +323,8 @@ extension QuoteBuilderViewModel {
                 precioBase: Decimal(string: "6800.00")!,
                 socket: "PCIe 4.0 x16",
                 consumoWatts: 300,
-                stock: 3
+                stock: 3,
+                descripcion: "GPU profesional de 48 GB para cargas pesadas de cómputo gráfico, modelado 3D e inteligencia artificial."
             ),
             Componente(
                 nombre: "Corsair WS DDR5 RDIMM 128GB (4x32GB)",
@@ -325,7 +332,8 @@ extension QuoteBuilderViewModel {
                 precioBase: Decimal(string: "640.00")!,
                 socket: "DDR5",
                 consumoWatts: 32,
-                stock: 8
+                stock: 8,
+                descripcion: "Kit de cuatro módulos DDR5 RDIMM de 32 GB (128 GB en total) para estaciones de trabajo y servidores."
             ),
             Componente(
                 nombre: "Seasonic PRIME PX-1300 80+ Platinum",
@@ -333,7 +341,8 @@ extension QuoteBuilderViewModel {
                 precioBase: Decimal(string: "369.00")!,
                 socket: "ATX 3.1",
                 consumoWatts: 1300,
-                stock: 7
+                stock: 7,
+                descripcion: "Fuente ATX 3.1 de 1300 W 80+ Platinum para configuraciones con varias GPU."
             )
         ]
     }

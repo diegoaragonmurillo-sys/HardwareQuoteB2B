@@ -25,6 +25,9 @@ final class Componente {
     var socket: String?
     var consumoWatts: Int
     var stock: Int
+    var descripcion: String?
+    var fotoURL: String?
+    var fichaTecnicaURL: String?
 
     @Relationship(inverse: \Cotizacion.componentes)
     var cotizaciones: [Cotizacion] = []
@@ -36,7 +39,10 @@ final class Componente {
         precioBase: Decimal,
         socket: String? = nil,
         consumoWatts: Int,
-        stock: Int
+        stock: Int,
+        descripcion: String? = nil,
+        fotoURL: String? = nil,
+        fichaTecnicaURL: String? = nil
     ) {
         self.id = id
         self.nombre = nombre
@@ -45,5 +51,8 @@ final class Componente {
         self.socket = socket
         self.consumoWatts = consumoWatts
         self.stock = stock
+        self.descripcion = descripcion
+        self.fotoURL = fotoURL
+        self.fichaTecnicaURL = fichaTecnicaURL
     }
 }

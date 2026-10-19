@@ -20,6 +20,9 @@ struct CrearComponenteFormView: View {
     @State private var consumoWattsTexto: String = ""
     @State private var socketDetalle: String = ""
     @State private var stockInicial: Int = 10
+    @State private var descripcion: String = ""
+    @State private var fotoURLTexto: String = ""
+    @State private var fichaTecnicaTexto: String = ""
 
     private var formularioValido: Bool {
         let nombreLimpio = nombre.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -68,6 +71,19 @@ struct CrearComponenteFormView: View {
                         .monospacedDigit()
                 }
 
+                Section("Detalle del Producto (opcional)") {
+                    TextField("Descripción", text: $descripcion, axis: .vertical)
+                        .lineLimit(2...5)
+                    TextField("URL de la foto", text: $fotoURLTexto)
+                        .keyboardType(.URL)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                    TextField("URL de la ficha técnica (PDF)", text: $fichaTecnicaTexto)
+                        .keyboardType(.URL)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                }
+
                 Section {
                     Button {
                         guardarComponente()
@@ -98,6 +114,11 @@ struct CrearComponenteFormView: View {
         }
     }
 
+    private func textoOpcional(_ texto: String) -> String? {
+        let limpio = texto.trimmingCharacters(in: .whitespacesAndNewlines)
+        return limpio.isEmpty ? nil : limpio
+    }
+
     private func guardarComponente() {
         let nombreFinal = nombre.trimmingCharacters(in: .whitespacesAndNewlines)
         let precioFinal = Decimal(string: precioBaseTexto.replacingOccurrences(of: ",", with: ".")) ?? 0
@@ -110,7 +131,10 @@ struct CrearComponenteFormView: View {
             precioBase: precioFinal,
             socket: socketLimpio.isEmpty ? nil : socketLimpio,
             consumoWatts: wattsFinal,
-            stock: stockInicial
+            stock: stockInicial,
+            descripcion: textoOpcional(descripcion),
+            fotoURL: textoOpcional(fotoURLTexto),
+            fichaTecnicaURL: textoOpcional(fichaTecnicaTexto)
         )
 
         viewModel.registrarNuevoComponenteEnAlmacen(nuevoComponente)

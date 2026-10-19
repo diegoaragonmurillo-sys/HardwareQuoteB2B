@@ -44,13 +44,22 @@ struct CatalogoHardwareView: View {
 
                     VStack(spacing: 12) {
                         ForEach(inventarioFiltrado) { item in
-                            TarjetaAlmacenRow(
-                                componente: item,
-                                accentColor: accentColor,
-                                alAgregar: {
-                                    agregarAlCotizador(item)
-                                }
-                            )
+                            NavigationLink {
+                                ProductoDetalleView(
+                                    componente: item,
+                                    viewModel: viewModel,
+                                    accentColor: accentColor
+                                )
+                            } label: {
+                                TarjetaAlmacenRow(
+                                    componente: item,
+                                    accentColor: accentColor,
+                                    alAgregar: {
+                                        agregarAlCotizador(item)
+                                    }
+                                )
+                            }
+                            .buttonStyle(.plain)
                         }
                     }
                 }

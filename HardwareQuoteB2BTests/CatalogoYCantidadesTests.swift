@@ -125,3 +125,33 @@ final class PrecisionDecimalTests: XCTestCase {
         XCTAssertEqual(cotizacion.total, Decimal(string: "714.99")!)
     }
 }
+
+@MainActor
+final class DetalleProductoTests: XCTestCase {
+
+    func testComponente_guardaDescripcionFotoYFichaTecnica() {
+        let componente = Componente(
+            nombre: "GPU", categoria: .gpu, precioBase: 100, consumoWatts: 200, stock: 3,
+            descripcion: "Tarjeta de prueba",
+            fotoURL: "https://example.com/gpu.png",
+            fichaTecnicaURL: "https://example.com/gpu.pdf"
+        )
+
+        XCTAssertEqual(componente.descripcion, "Tarjeta de prueba")
+        XCTAssertEqual(componente.fotoURL, "https://example.com/gpu.png")
+        XCTAssertEqual(componente.fichaTecnicaURL, "https://example.com/gpu.pdf")
+    }
+
+    func testComponente_sinDetalle_dejaLosCamposEnNil() {
+        let componente = Componente(nombre: "RAM", categoria: .ram, precioBase: 10, consumoWatts: 5, stock: 1)
+
+        XCTAssertNil(componente.descripcion)
+        XCTAssertNil(componente.fotoURL)
+        XCTAssertNil(componente.fichaTecnicaURL)
+    }
+
+    func testCatalogoSemilla_todosTienenDescripcion() {
+        let sinDescripcion = QuoteBuilderViewModel.catalogoDisponible.filter { $0.descripcion == nil }
+        XCTAssertTrue(sinDescripcion.isEmpty, "Sin descripción: \(sinDescripcion.map(\.nombre))")
+    }
+}

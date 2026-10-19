@@ -16,6 +16,7 @@ struct QuoteBuilderView: View {
 
     // MARK: - Variables de Estado de Navegación y Exportación
     @State private var mostrarHistorial = false
+    @State private var mostrarInspectorUIKit = false
     @State private var mostrarShareSheet = false
     @State private var urlDocumentoPDF: URL?
     @State private var estaGenerandoPDF = false
@@ -52,6 +53,10 @@ struct QuoteBuilderView: View {
             .sheet(isPresented: $mostrarHistorial) {
                 HistorialCotizacionesViewRepresentable()
             }
+            // Sheet: Módulo UIKit Demostrativo (ComponentesViewController + DetalleComponenteViewController)
+            .sheet(isPresented: $mostrarInspectorUIKit) {
+                ComponentesUIKitViewRepresentable(componentes: viewModel.inventarioAlmacen)
+            }
             // Sheet: Hoja nativa de compartir PDF (WhatsApp, Correo, Archivos)
             .sheet(isPresented: $mostrarShareSheet) {
                 if let url = urlDocumentoPDF {
@@ -63,7 +68,7 @@ struct QuoteBuilderView: View {
 
     // MARK: - Cabecera Principal Alineada Arriba (.top)
     private var cabeceraPrincipalSection: some View {
-        HStack(alignment: .center, spacing: 12) {
+        HStack(alignment: .center, spacing: 10) {
             VStack(alignment: .leading, spacing: 3) {
                 Text("Cotizador B2B")
                     .font(.system(size: 28, weight: .bold, design: .default))
@@ -75,6 +80,18 @@ struct QuoteBuilderView: View {
             }
 
             Spacer()
+
+            // Botón secundario de acceso al módulo UIKit demostrativo (ComponentesViewController)
+            Button {
+                mostrarInspectorUIKit = true
+            } label: {
+                Image(systemName: "list.bullet.rectangle")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(corporateAccent)
+                    .frame(width: 34, height: 34)
+                    .background(corporateAccent.opacity(0.10), in: Circle())
+            }
+            .accessibilityLabel("Abrir catálogo demostrativo UIKit")
 
             // Botón de Historial
             Button {
@@ -325,7 +342,36 @@ struct QuoteBuilderView: View {
 
     // MARK: - 5. Barra Flotante de Resumen Financiero y Emisión de Cotización
     private var resumenFinancieroFlotante: some View {
-        VStack(spacing: 14) {
+        VStack(spacing: 12) {
+            HStack(spacing: 6) {
+                Image(systemName: "globe")
+                    .font(.caption2)
+                    .foregroundStyle(corporateAccent)
+
+                if viewModel.estaCargandoTasa {
+                    Text("Consultando tipo de cambio oficial B2B (REST API)...")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                } else {
+                    Text("Tipo de cambio oficial B2B (REST API): 1 USD = $\(String(format: "%.2f", viewModel.tasaCambioUSD_MXN)) MXN")
+                        .font(.caption2.weight(.medium))
+                        .monospacedDigit()
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+
+                Button {
+                    viewModel.consultarTipoCambio()
+                } label: {
+                    Image(systemName: "arrow.clockwise")
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(corporateAccent)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Actualizar tipo de cambio REST API")
+            }
+
             HStack(alignment: .firstTextBaseline) {
                 VStack(alignment: .leading, spacing: 4) {
                     HStack(spacing: 14) {
@@ -399,7 +445,7 @@ struct QuoteBuilderView: View {
             .disabled(viewModel.componentesSeleccionados.isEmpty || estaGenerandoPDF)
         }
         .padding(.horizontal, 20)
-        .padding(.top, 16)
+        .padding(.top, 14)
         .padding(.bottom, 12)
         .background(.ultraThinMaterial)
         .overlay(alignment: .top) {
@@ -432,6 +478,15 @@ struct QuoteBuilderView: View {
                     totalFinal: viewModel.precioFinal,
                     idCotizacion: nuevaCotizacion.id.uuidString
                 )
+
+                if let datosPDF = try? Data(contentsOf: urlPDF) {
+                    Task {
+                        _ = try? await FirebaseService.shared.subirComprobanteCotizacionPDF(
+                            datosPDF: datosPDF,
+                            idCotizacion: nuevaCotizacion.id.uuidString
+                        )
+                    }
+                }
 
                 await MainActor.run {
                     self.urlDocumentoPDF = urlPDF
@@ -520,6 +575,19 @@ struct HistorialCotizacionesViewRepresentable: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UINavigationController {
         let historialVC = HistorialCotizacionesViewController()
         return UINavigationController(rootViewController: historialVC)
+    }
+
+    func updateUIViewController(_ uiViewController: UINavigationController, context: Context) {}
+}
+
+// MARK: - Puente UIViewControllerRepresentable para ComponentesViewController (Módulo UIKit Demostrativo)
+struct ComponentesUIKitViewRepresentable: UIViewControllerRepresentable {
+    let componentes: [Componente]
+
+    func makeUIViewController(context: Context) -> UINavigationController {
+        let componentesVC = ComponentesViewController()
+        componentesVC.componentes = componentes
+        return UINavigationController(rootViewController: componentesVC)
     }
 
     func updateUIViewController(_ uiViewController: UINavigationController, context: Context) {}

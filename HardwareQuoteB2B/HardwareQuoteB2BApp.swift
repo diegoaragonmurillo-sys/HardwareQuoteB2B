@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 import FirebaseCore
 
 // Creamos el delegado nativo para arrancar Firebase
@@ -17,21 +18,18 @@ struct HardwareQuoteB2BApp: App {
     
     var body: some Scene {
         WindowGroup {
-            // 1. REEMPLAZAMOS QuoteBuilderView() POR EL LOGIN
             LoginViewControllerWrapper()
-                .ignoresSafeArea() // Hace que el diseño ocupe toda la pantalla de borde a borde
+                .ignoresSafeArea()
+                .modelContainer(for: [Cotizacion.self, Componente.self])
         }
     }
 }
 
-// 2. AÑADIMOS EL PUENTE AL FINAL DEL ARCHIVO
-// Esta estructura convierte tu LoginViewController (UIKit) en una vista que SwiftUI puede renderizar
+// Puente UIViewControllerRepresentable para LoginViewController (UIKit)
 struct LoginViewControllerWrapper: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> LoginViewController {
         return LoginViewController()
     }
     
-    func updateUIViewController(_ uiViewController: LoginViewController, context: Context) {
-        // Se deja vacío porque la vista no necesita actualizarse desde SwiftUI
-    }
+    func updateUIViewController(_ uiViewController: LoginViewController, context: Context) {}
 }

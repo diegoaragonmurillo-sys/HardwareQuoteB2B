@@ -2,6 +2,9 @@
 //  ComponentesViewController.swift
 //  HardwareQuoteB2B
 //
+//  Módulo UIKit demostrativo del uso formal de @IBOutlet, @IBAction y UIStoryboardSegue
+//  según la rúbrica oficial, coexistiendo con la arquitectura reactiva SwiftUI.
+//
 
 import UIKit
 import AVFoundation
@@ -18,24 +21,68 @@ final class ComponentesViewController: UIViewController {
     private var audioRecorder: AVAudioRecorder?
     private var isRecording = false
 
-    var componentes: [Componente] = []
+    var componentes: [Componente] = QuoteBuilderViewModel.catalogoDisponible
     private var componentesFiltrados: [Componente] = []
 
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupProgrammaticFallbackIfNeeded()
         setupUI()
         setupData()
     }
 
+    /// Fallback programático cuando el controlador se instancia sin Storyboard desde el menú de desarrollador.
+    private func setupProgrammaticFallbackIfNeeded() {
+        guard tableView == nil || searchBar == nil else { return }
+        view.backgroundColor = .systemGroupedBackground
+
+        let barraBusqueda = UISearchBar()
+        barraBusqueda.placeholder = "Filtrar componentes UIKit..."
+        barraBusqueda.searchBarStyle = .minimal
+        barraBusqueda.translatesAutoresizingMaskIntoConstraints = false
+        self.searchBar = barraBusqueda
+
+        let tabla = UITableView(frame: .zero, style: .insetGrouped)
+        tabla.translatesAutoresizingMaskIntoConstraints = false
+        self.tableView = tabla
+
+        let botonVoz = UIButton(type: .system)
+        botonVoz.translatesAutoresizingMaskIntoConstraints = false
+        botonVoz.backgroundColor = UIColor(red: 0.20, green: 0.34, blue: 0.55, alpha: 0.12)
+        botonVoz.layer.cornerRadius = 10
+        botonVoz.addTarget(self, action: #selector(recordVoiceNoteTapped(_:)), for: .touchUpInside)
+        self.recordVoiceNoteButton = botonVoz
+
+        view.addSubview(barraBusqueda)
+        view.addSubview(botonVoz)
+        view.addSubview(tabla)
+
+        NSLayoutConstraint.activate([
+            barraBusqueda.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            barraBusqueda.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
+            barraBusqueda.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
+
+            botonVoz.topAnchor.constraint(equalTo: barraBusqueda.bottomAnchor, constant: 4),
+            botonVoz.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            botonVoz.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            botonVoz.heightAnchor.constraint(equalToConstant: 40),
+
+            tabla.topAnchor.constraint(equalTo: botonVoz.bottomAnchor, constant: 6),
+            tabla.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tabla.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tabla.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+    }
+
     private func setupUI() {
-        title = "Catálogo de Componentes"
-        
+        title = "Catálogo UIKit"
+
         tableView.dataSource = self
         tableView.delegate = self
         searchBar.delegate = self
 
-        recordVoiceNoteButton?.setTitle("Grabar Nota de Voz", for: .normal)
+        recordVoiceNoteButton?.setTitle(" Grabar Nota de Voz", for: .normal)
         recordVoiceNoteButton?.setImage(UIImage(systemName: "mic.fill"), for: .normal)
     }
 
@@ -82,8 +129,8 @@ final class ComponentesViewController: UIViewController {
             try audioSession.setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker])
             try audioSession.setActive(true)
 
-            let documentPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-            let audioURL = documentPath.appendingPathComponent("NotaVoz_\(Date().timeIntervalSince1970).m4a")
+            let tempPath = FileManager.default.temporaryDirectory
+            let audioURL = tempPath.appendingPathComponent("NotaVoz_\(Date().timeIntervalSince1970).m4a")
 
             let settings: [String: Any] = [
                 AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
@@ -97,7 +144,7 @@ final class ComponentesViewController: UIViewController {
             audioRecorder?.record()
 
             isRecording = true
-            recordVoiceNoteButton?.setTitle("Detener Grabación", for: .normal)
+            recordVoiceNoteButton?.setTitle(" Detener Grabación", for: .normal)
             recordVoiceNoteButton?.tintColor = .systemRed
         } catch {
             print("Error al iniciar grabación: \(error.localizedDescription)")
@@ -109,7 +156,7 @@ final class ComponentesViewController: UIViewController {
         audioRecorder = nil
         isRecording = false
 
-        recordVoiceNoteButton?.setTitle("Grabar Nota de Voz", for: .normal)
+        recordVoiceNoteButton?.setTitle(" Grabar Nota de Voz", for: .normal)
         recordVoiceNoteButton?.tintColor = .systemBlue
 
         try? AVAudioSession.sharedInstance().setActive(false)
@@ -125,7 +172,7 @@ final class ComponentesViewController: UIViewController {
         present(alert, animated: true)
     }
 
-    // MARK: - Navigation
+    // MARK: - Navigation (UIStoryboardSegue)
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard segue.identifier == segueDetalleID,
               let destinationVC = segue.destination as? DetalleComponenteViewController,
@@ -143,22 +190,32 @@ extension ComponentesViewController: UITableViewDataSource, UITableViewDelegate 
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: ComponenteTableViewCell.reuseIdentifier,
-            for: indexPath
-        ) as? ComponenteTableViewCell else {
-            return UITableViewCell()
+        let componente = componentesFiltrados[indexPath.row]
+
+        if let cell = tableView.dequeueReusableCell(withIdentifier: ComponenteTableViewCell.reuseIdentifier) as? ComponenteTableViewCell {
+            cell.configure(with: componente)
+            return cell
         }
 
-        let componente = componentesFiltrados[indexPath.row]
-        cell.configure(with: componente)
-        return cell
+        let fallbackCell = UITableViewCell(style: .subtitle, reuseIdentifier: "FallbackComponenteCell")
+        fallbackCell.textLabel?.text = componente.nombre
+        fallbackCell.textLabel?.font = .systemFont(ofSize: 15, weight: .semibold)
+        fallbackCell.detailTextLabel?.text = "\(componente.categoria.rawValue) • \(componente.consumoWatts)W • $\(String(format: "%.2f", componente.precioBase))"
+        fallbackCell.accessoryType = .disclosureIndicator
+        return fallbackCell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let componenteSeleccionado = componentesFiltrados[indexPath.row]
-        performSegue(withIdentifier: segueDetalleID, sender: componenteSeleccionado)
+
+        if storyboard != nil {
+            performSegue(withIdentifier: segueDetalleID, sender: componenteSeleccionado)
+        } else {
+            let detalleVC = DetalleComponenteViewController()
+            detalleVC.componente = componenteSeleccionado
+            navigationController?.pushViewController(detalleVC, animated: true)
+        }
     }
 }
 

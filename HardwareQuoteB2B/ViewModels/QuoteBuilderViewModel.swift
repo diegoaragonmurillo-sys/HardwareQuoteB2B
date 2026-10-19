@@ -17,6 +17,10 @@ final class QuoteBuilderViewModel {
     var margenGanancia: Double // Ej: 0.18 = 18%
     var mostrarSelectorCatalogo: Bool = false
 
+    // MARK: - Estado REST API (Tipo de Cambio B2B)
+    var tasaCambioUSD_MXN: Double = 1.0
+    var estaCargandoTasa: Bool = false
+
     // MARK: - Computed Metrics (Watts & Power)
     /// Consumo energético total de los componentes (excluyendo la capacidad nominal de la fuente)
     var consumoTotalWatts: Int {
@@ -79,6 +83,10 @@ final class QuoteBuilderViewModel {
         subtotal + utilidadComercial
     }
 
+    var precioFinalMXN: Double {
+        precioFinal * tasaCambioUSD_MXN
+    }
+
     // MARK: - Init
     init(
         clienteNombre: String = "Corporativo Enterprise S.A.",
@@ -90,6 +98,29 @@ final class QuoteBuilderViewModel {
         self.componentesSeleccionados = componentesSeleccionados
         self.inventarioAlmacen = inventarioAlmacen
         self.margenGanancia = margenGanancia
+        consultarTipoCambio()
+    }
+
+    // MARK: - Consulta REST API con URLSession (async/await)
+    func consultarTipoCambio() {
+        estaCargandoTasa = true
+        Task {
+            do {
+                let clienteREST = HardwareExchangeRateClient()
+                let respuesta = try await clienteREST.consultarTipoCambioHardware(
+                    monedaBase: "USD",
+                    monedaDestino: "MXN"
+                )
+                await MainActor.run {
+                    self.tasaCambioUSD_MXN = respuesta.tasaEfectiva
+                    self.estaCargandoTasa = false
+                }
+            } catch {
+                await MainActor.run {
+                    self.estaCargandoTasa = false
+                }
+            }
+        }
     }
 
     // MARK: - Actions
